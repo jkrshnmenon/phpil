@@ -18,7 +18,6 @@ TARGET = os.path.join(TARGET_SRC, "sapi/cli/php")
 # init
 e = pwnlib.elf.ELF(TARGET)
 parser_addr = e.symbols['zend_parse_parameters']
-print(hex(parser_addr))
 script_template = """ 
 gef config context.enable 0
 b *%#x
@@ -31,6 +30,7 @@ quit
 cidx = clang.cindex.Index.create()
 
 # TODO:
+# parse zend_function_entry ext_functions
 # intercept zend_parse_method_parameters for class functions
 
 def list_builtins():
@@ -119,21 +119,17 @@ def extract_arg_type_libclang(func):
         macros.append(tokens[last_idx:])
 
         # parse argument number
-        res = re.search(r'\((\d+),(\d+)\)', ''.join(macros[0]))
-        print(res.group(1))
-        print(res.group(2))
-        min_num = int(macros[0][2])
-        max_num = int(macros[0][4])
+        res = re.search(r'\(([-+\d]+),([-+\d]+)\)', ''.join(macros[0]))
+        min_num = int(res.group(1))
+        max_num = int(res.group(2))
 
-        if min_num == max_num:
-            print("handle")
-            print(macros[min_num][0])
-        else:
-            raise NotImplementedError("we only handle min_num == max_num at this moment")
-
-        print(macros)
-        print(min_num, max_num)
-        print('-'*0x10)
+        # extract argument types
+        args = [(min_num, max_num)]
+        for macro in macros:
+            if not macro[0].startswith("Z_PARAM"):
+                continue
+            args.append(macro[0])
+        return args
 
     except Exception as e:
         print("error", e)
@@ -154,6 +150,7 @@ def extract_arg_type(func):
     return None
 
 funcs = list_builtins()
+d = {}
 
 for func in funcs:
     #if func != 'str_repeat':
@@ -161,4 +158,9 @@ for func in funcs:
     print(f"func: {func}")
     raw_arg_type = extract_arg_type(func)
     print(f"arg_type: {raw_arg_type}")
+    if raw_arg_type:
+        d[func] = raw_arg_type
     #exit(0)
+
+with open("result.json", "w") as f:
+    f.write(json.dumps(d))
