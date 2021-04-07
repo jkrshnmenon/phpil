@@ -47,4 +47,4 @@ class opcodes:
 
 
 if __name__ == '__main__':
-    print opcodes.Nop
+    print(opcodes.Nop)

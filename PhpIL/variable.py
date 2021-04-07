@@ -21,4 +21,4 @@ class Variable:
         return "v"+str(self.id)
 
 if __name__ == '__main__':
-    print Variable(1)
+    print (Variable(1))

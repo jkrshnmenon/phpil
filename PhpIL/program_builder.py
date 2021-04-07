@@ -1,12 +1,12 @@
-import program
-import instructions
-import typesData
-import analyzer
-import variable
-import operation
-import probability
-import settings
-from code_generators import CodeGenerator
+from . import program
+from . import instructions
+from . import typesData
+from . import analyzer
+from . import variable
+from . import operation
+from . import probability
+from . import settings
+from .code_generators import CodeGenerator
 
 class ProgramBuilder:
 
@@ -53,26 +53,26 @@ class ProgramBuilder:
         return self.program
 
     '''get variables of type "type" '''
-    def randVar(self, type=typesData.Types.Unknown, strict=0):
+    def randVar(self, dtype=typesData.Types.Unknown, strict=0):
 
         candidates = []
-        iter = 2*len(self.scopeAnalyzer.scopes)
-        while len(candidates) == 0 and iter > 0:
+        ctr = 2*len(self.scopeAnalyzer.scopes)
+        while len(candidates) == 0 and ctr > 0:
             candidates = probability.Random.chooseBiased(self.scopeAnalyzer.scopes, 6)
-            candidates = filter(lambda x: self.typeAnalyzer.getType(x) == type or self.typeAnalyzer.getType(x) == typesData.Types.Unknown, candidates)
-            iter -= 1
+            candidates = list(filter(lambda x: self.typeAnalyzer.getType(x) == dtype or self.typeAnalyzer.getType(x) == typesData.Types.Unknown, candidates))
+            ctr -= 1
 
         if len(candidates) == 0:
-            if type == typesData.Types.Boolean:
+            if dtype == typesData.Types.Boolean:
                 candidates = [self.loadBoolean(probability.Random.randomBool())]
-            if type == typesData.Types.String:
+            if dtype == typesData.Types.String:
                 candidates = [self.loadString(self.getString())]
-            if type == typesData.Types.Float:
+            if dtype == typesData.Types.Float:
                 candidates = [self.loadFloat(self.getFloat())]
-            if type == typesData.Types.Integer:
+            if dtype == typesData.Types.Integer:
                 candidates = [self.loadInteger(self.getInt())]
 
-            if type == typesData.Types.Unknown:
+            if dtype == typesData.Types.Unknown:
                 while len(candidates) == 0:
                     candidates = probability.Random.chooseBiased(self.scopeAnalyzer.scopes, 5)
 
@@ -166,8 +166,8 @@ class ProgramBuilder:
             return False
         argsTypes = signature.getInputTypes()
         arguments = []
-        for type in argsTypes:
-            arguments.append(self.randVar(type))
+        for dtype in argsTypes:
+            arguments.append(self.randVar(dtype))
 
         return arguments
 
@@ -347,8 +347,8 @@ if __name__ == '__main__':
             out1.append(a.getInt())
             out2.append(a.getFloat())
             out3.append(a.getString())
-        print out1
-        print out2
-        print out3
+        print(out1)
+        print(out2)
+        print(out3)
 
     main()

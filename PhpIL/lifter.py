@@ -1,11 +1,11 @@
-import program
-import codeEmitter
-import instructions
-import probability
-import operation
-import variable
-import typesData
-from opcodes import opcodes
+from . import program
+from . import codeEmitter
+from . import instructions
+from . import probability
+from . import operation
+from . import variable
+from . import typesData
+from .opcodes import opcodes
 
 class Lifter:
 
@@ -316,5 +316,5 @@ if __name__ == '__main__':
         # print prog
         l = Lifter(prog)
         l.doLifting()
-        print l.emitter
+        print(l.emitter)
     main()

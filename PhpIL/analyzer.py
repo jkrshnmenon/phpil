@@ -1,9 +1,9 @@
-import program
-import opcodes
-import variable
-import operation
-import instructions
-from typesData import Types
+from . import program
+from . import opcodes
+from . import variable
+from . import operation
+from . import instructions
+from .typesData import Types
 
 class Analyzer(object):
 
@@ -80,7 +80,7 @@ class ContextAnalyzer(Analyzer):
 
             if self.context[-1][0] & ContextAnalyzer.isInFunction:
                 a.append("InFunction")
-            print a
+            print(a)
 
         if inst.isLoopBegin() or inst.isBeginFunction():
             self.context.append([self.context[-1][0]])
@@ -334,7 +334,7 @@ if __name__ == '__main__':
             instructions.Instruction(operation.CallFunction(2),[variable.Variable(1), variable.Variable(4), variable.Variable(0)],[variable.Variable(6)]),
             instructions.Instruction(operation.LoadInteger(1337),False,[variable.Variable(7)]),
         ])
-        print prog
+        print(prog)
         ctx = ContextAnalyzer(prog)
         ctx.doAnalyze()
         #

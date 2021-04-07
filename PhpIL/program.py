@@ -1,4 +1,4 @@
-import opcodes
+from . import opcodes
 
 class Program:
 
@@ -27,11 +27,11 @@ class Program:
         return string
 
 if __name__ == '__main__':
-    import opcodes
-    import operation
-    import variable
-    import instructions
-    import typesData
+    from . import opcodes
+    from . import operation
+    from . import variable
+    from . import instructions
+    from . import typesData
 
     Program([
         instructions.Instruction(operation.Nop()), instructions.Instruction(operation.LoadInteger(1),False,[variable.Variable(12)])
@@ -51,7 +51,7 @@ if __name__ == '__main__':
         instructions.Instruction(operation.EndWhile()),
     ])
 
-    print Program([
+    print (Program([
         instructions.Instruction(operation.LoadInteger(0), False, [variable.Variable(0)]),
         instructions.Instruction(operation.LoadInteger(1), False, [variable.Variable(1)]),
         instructions.Instruction(operation.LoadInteger(10), False, [variable.Variable(2)]),
@@ -84,7 +84,7 @@ if __name__ == '__main__':
         instructions.Instruction(operation.EndIf(), False, False),
         instructions.Instruction(operation.EndFor(), False, False)
 
-    ])
+    ]))
 
     Program()
     Program([

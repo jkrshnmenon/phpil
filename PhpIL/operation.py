@@ -1,4 +1,4 @@
-import opcodes
+from . import opcodes
 
 class Operation(object):
 

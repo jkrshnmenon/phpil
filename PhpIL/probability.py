@@ -69,8 +69,8 @@ class Random:
     @staticmethod
     def chooseWeightedBiased(d):
 
-        weights = d.values()
-        items = d.keys()
+        weights = list(d.values())
+        items = list(d.keys())
         prob = weights[0]*(1.0/sum(weights))
 
         return Random.withprobability(prob, lambda: items[0],
@@ -98,18 +98,18 @@ if __name__ == '__main__':
     import sys
     def main():
 
-        print Random.randomString(10)
+        print(Random.randomString(10))
         return
-        print Random.chooseWeightedBiased({'a':1,
+        print(Random.chooseWeightedBiased({'a':1,
                                            'b':5,
                                            'c':2,
-                                           'd':3})
+                                           'd':3}))
 
-        print Random.chooseBiased([111,222,333,444,555,666],1.5)
-        print Random.probability(0.5)
+        print(Random.chooseBiased([111,222,333,444,555,666],1.5))
+        print(Random.probability(0.5))
         Random.withprobability(0.9, lambda: sys.stdout.write("YES\n"))
         Random.withprobability(0.1, lambda: sys.stdout.write("YES\n"), lambda: sys.stdout.write("NO\n"))
-        print Random.chooseUniform(range(100,200))
-        print Random.randomInt(100,200)
+        print(Random.chooseUniform(range(100,200)))
+        print(Random.randomInt(100,200))
 
     main()

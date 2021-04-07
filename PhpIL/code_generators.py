@@ -1,8 +1,8 @@
-import program_builder
-import typesData
-import variable
-import operation
-import probability
+from . import program_builder
+from . import typesData
+from . import variable
+from . import operation
+from . import probability
 
 class CodeGenerator:
 
@@ -45,7 +45,7 @@ class CodeGenerator:
     def intArrayGenerator(programBuilder):
         # print "intArrayGenerator"
         initial = []
-        for i in range(probability.Random.randomInt(0,10)):
+        for _ in range(probability.Random.randomInt(0,10)):
             initial.append(probability.Random.randomInt(0,6))
         programBuilder.createArray(initial)
         return True
@@ -55,7 +55,7 @@ class CodeGenerator:
     def dictGenerator(programBuilder):
         # print "dictGenerator"
         initial = []
-        for i in range(probability.Random.randomInt(0,10)):
+        for _ in range(probability.Random.randomInt(0,10)):
             key = probability.Random.withEqualProbability(
                 lambda: programBuilder.getInt(),
                 lambda: programBuilder.getFloat(),
@@ -77,7 +77,7 @@ class CodeGenerator:
     def floatArrayGenerator(programBuilder):
         # print "floatArrayGenerator"
         initial = []
-        for i in range(probability.Random.randomInt(0,10)):
+        for _ in range(probability.Random.randomInt(0,10)):
             initial.append(probability.Random.randomFloat(0,6))
         programBuilder.createArray(initial)
         return True
@@ -85,7 +85,7 @@ class CodeGenerator:
     @staticmethod
     def unaryOperationGenerator(programBuilder):
         # print "unaryOperationGenerator"
-        input = programBuilder.randVar(type = (typesData.Types.Integer) )
+        input = programBuilder.randVar(dtype=(typesData.Types.Integer))
         programBuilder.unaryOperation(probability.Random.chooseUniform(operation.UnaryOperator.all()),input )
         return True
 
@@ -131,7 +131,7 @@ class CodeGenerator:
     @staticmethod
     def ifStatementGenerator(programBuilder):
         # print "ifStatementGenerator"
-        cond = programBuilder.randVar(type=typesData.Types.Boolean)
+        cond = programBuilder.randVar(dtype=typesData.Types.Boolean)
         a = programBuilder.randVar()
         phi = programBuilder.phi(a)
         programBuilder.beginIf(cond)
@@ -211,7 +211,7 @@ class CodeGenerator:
     @staticmethod
     def functionCallGenerator(programBuilder):
         # print "functionCallGenerator"
-        function = programBuilder.randVar(type = typesData.Types.Function)
+        function = programBuilder.randVar(dtype=typesData.Types.Function)
         if not isinstance(function, variable.Variable):
             return False
         # recursive = programBuilder.checkRecursion(function)
@@ -245,7 +245,7 @@ class CodeGenerator:
     def arrayLiteralGenerator(programBuilder):
         # print "arrayLiteralGenerator"
         initial = []
-        for i in range(probability.Random.randomInt(0,6)):
+        for _ in range(probability.Random.randomInt(0,6)):
             initial.append(programBuilder.randVar())
         programBuilder.createArray(initial)
         return True
@@ -253,11 +253,11 @@ class CodeGenerator:
     @staticmethod
     def getArrayElemGenerator(programBuilder):
         # print "getArrayElemGenerator"
-        arr = programBuilder.randVar(type = typesData.Types.Array)
+        arr = programBuilder.randVar(dtype=typesData.Types.Array)
         if not arr:
-            arr = programBuilder.randVar(type = typesData.Types.String)
+            arr = programBuilder.randVar(dtype=typesData.Types.String)
 
-        lst = range(probability.Random.randomInt(0,10))
+        lst = [*range(probability.Random.randomInt(0,10))]
         temp = programBuilder.getInt()
         lst.append(temp)
         index = probability.Random.chooseUniform(lst)
@@ -267,23 +267,37 @@ class CodeGenerator:
     @staticmethod
     def setArrayElemGenerator(programBuilder):
         # print "setArrayElemGenerator"
-        arr = programBuilder.randVar(type = typesData.Types.Array)
+        arr = programBuilder.randVar(dtype=typesData.Types.Array)
         if not arr:
-            arr = programBuilder.randVar(type = typesData.Types.String)
+            arr = programBuilder.randVar(dtype=typesData.Types.String)
 
-        lst = range(probability.Random.randomInt(0,10))
+        lst = [*range(probability.Random.randomInt(0,10))]
         temp = programBuilder.getInt()
         lst.append(temp)
         index = probability.Random.chooseUniform(lst)
         value = programBuilder.randVar()
         programBuilder.setArrayElem(arr, index, value)
         return True
+    
+    @staticmethod
+    def builtinGenerator(programBuilder):
+        raise NotImplementedError("Builtin generator is not implemented yet")
+        function = programBuilder.randVar(dtype=typesData.Types.Builtin)
+        if not isinstance(function, variable.Variable):
+            return False
+        # recursive = programBuilder.checkRecursion(function)
+        # if recursive:
+        #     return False
+        arguments = programBuilder.generateCallArguments(function)
+        if not isinstance(arguments, list):
+            return False
+        programBuilder.callFunction(function, arguments)
+        return True
 
 
     #objectLiteralGenerator not created.
     #objectLiteralWithSpreadGenerator not created
     #builinGenerator not created
-    #functionDefinationGenerator not created
     #propertyRetrievalGenerator not created
     #propertyAssignmentGenerator not created
     #propertyRemovalGenerator not created
@@ -297,9 +311,7 @@ class CodeGenerator:
     #instanceOfGenerator not created
     #inGenerator not created
     #methodCallGenerator not created
-    #functionCallGenerator not created
     #constructorCallGenerator not created
     #functionCallWithSpreadGenerator not created
     #reassignmentGenerator not created
     #comparisonGenerator not created
-    #ifStatementGenerator not created ***

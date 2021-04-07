@@ -10,7 +10,8 @@ class Types:
     Function = 1 << 5 | String
     Class = 1 << 6
     Array = 1 << 7
-    Unknown  = 1 << 8
+    Builtin = 1 << 8 | Function
+    Unknown  = 1 << 9
 
 
 class FunctionSignature:
@@ -22,8 +23,8 @@ class FunctionSignature:
         self.outerVars = outerVars
         self.isCons = True
 
-    def setReturnType(self, type):
-        self.returnType = type
+    def setReturnType(self, dtype):
+        self.returnType = dtype
 
     def getReturnType(self):
         return self.returnType
@@ -32,8 +33,8 @@ class FunctionSignature:
         return self.outerVars
 
     def setInputTypes(self, types):
-        for i, type in enumerate(types):
-            self.inputTypes[i] = type
+        for i, dtype in enumerate(types):
+            self.inputTypes[i] = dtype
 
     def getInputTypes(self):
         return self.inputTypes

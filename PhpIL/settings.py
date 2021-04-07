@@ -1,4 +1,4 @@
-import code_generators
+from . import code_generators
 
 class Settings:
 
