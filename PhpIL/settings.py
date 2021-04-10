@@ -16,9 +16,9 @@ class Settings:
         code_generators.CodeGenerator.forLoopGenerator : 15,
         code_generators.CodeGenerator.breakGenerator : 20,
         code_generators.CodeGenerator.continueGenerator : 20,
-        code_generators.CodeGenerator.functionDefinationGenerator : 30,
+        code_generators.CodeGenerator.functionDefinationGenerator : 10,
         code_generators.CodeGenerator.functionReturnGenerator : 0,
-        code_generators.CodeGenerator.functionCallGenerator : 80,
+        code_generators.CodeGenerator.functionCallGenerator : 10,
         code_generators.CodeGenerator.tryCatchGenerator : 1,
         code_generators.CodeGenerator.throwGenerator : 0,
         code_generators.CodeGenerator.floatArrayGenerator : 20,
@@ -27,5 +27,6 @@ class Settings:
         code_generators.CodeGenerator.doWhileLoopGenerator : 5,
         code_generators.CodeGenerator.dictGenerator: 10,
         code_generators.CodeGenerator.getArrayElemGenerator: 20,
-        code_generators.CodeGenerator.setArrayElemGenerator: 20
+        code_generators.CodeGenerator.setArrayElemGenerator: 20,
+        code_generators.CodeGenerator.builtinGenerator: 200
     }

@@ -112,11 +112,6 @@ class CreateArray(Operation):
         super(CreateArray, self).__init__(numInputs=numInitialValues, numOutputs=1, numTempvars=0)
         self.opcode = opcodes.opcodes.CreateArray
 
-class CallFunction(Operation):
-    def __init__(self, numArgs):
-        super(CallFunction, self).__init__(numInputs=numArgs+1, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.CallFunction
-
 class BeginIf(Operation):
     def __init__(self):
         super(BeginIf, self).__init__(numInputs=1, numOutputs=0, numTempvars=0, attributes=[Operation.Attributes.isBlockBegin])
@@ -245,12 +240,22 @@ class BeginFunction(Operation):
         self.opcode = opcodes.opcodes.BeginFunction
         self.signature = signature
 
+class BuiltinFunction(Operation):
+    def __init__(self, name, signature):
+        super(BuiltinFunction, self).__init__(numInputs=0, numOutputs=1, numTempvars=signature.numArgs)
+        self.opcode = opcodes.opcodes.BuiltinMethod
+        self.name = name
+        self.signature = signature
+
 class EndFunction(Operation):
     def __init__(self):
         super(EndFunction, self).__init__(numInputs=0, numOutputs=0, numTempvars=0, attributes = [Operation.Attributes.isBlockEnd])
         self.opcode = opcodes.opcodes.EndFunction
 
-
+class CallFunction(Operation):
+    def __init__(self, numArgs):
+        super(CallFunction, self).__init__(numInputs=numArgs+1, numOutputs=1, numTempvars=0)
+        self.opcode = opcodes.opcodes.CallFunction
 
 class ThrowException(Operation):
     def __init__(self):
@@ -337,7 +342,20 @@ class BinaryOperator:
     Xor     = "^"
     LShift  = "<<"
     RShift  = ">>"
+    Concat  = "."
 
     @staticmethod
     def all():
-        return [BinaryOperator.Add, BinaryOperator.Sub, BinaryOperator.Mul, BinaryOperator.Div, BinaryOperator.Mod, BinaryOperator.BitAnd, BinaryOperator.BitOr, BinaryOperator.LogicAnd, BinaryOperator.LogicOr, BinaryOperator.Xor, BinaryOperator.LShift, BinaryOperator.RShift ]
+        return [BinaryOperator.Add, 
+                BinaryOperator.Sub, 
+                BinaryOperator.Mul, 
+                BinaryOperator.Div, 
+                BinaryOperator.Mod, 
+                BinaryOperator.BitAnd, 
+                BinaryOperator.BitOr, 
+                BinaryOperator.LogicAnd, 
+                BinaryOperator.LogicOr, 
+                BinaryOperator.Xor, 
+                BinaryOperator.LShift, 
+                BinaryOperator.RShift, 
+                BinaryOperator.Concat]

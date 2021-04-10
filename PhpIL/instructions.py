@@ -57,6 +57,9 @@ class Instruction:
     '''misc functions'''
     def isBeginFunction(self):
         return self.operation.opcode == opcodes.opcodes.BeginFunction
+    
+    def isBuiltinFunction(self):
+        return self.operation.opcode == opcodes.opcodes.BuiltinMethod
 
     def isEndFunction(self):
         return self.operation.opcode == opcodes.opcodes.EndFunction

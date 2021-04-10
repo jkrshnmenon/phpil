@@ -11,14 +11,22 @@ class Variable:
         return False
 
     def __str__(self):
-        return "$v"+str(self.id)
+        if isinstance(self.id, int):
+            retval = "$v"+str(self.id)
+        else:
+            retval = "$" + self.id
+        return retval
 
     def __hash__(self):
         # print "AA"
         return hash(self.id)
 
     def __repr__(self):
-        return "v"+str(self.id)
+        if isinstance(self.id, int):
+            retval = "v"+str(self.id)
+        else:
+            retval = self.id
+        return retval
 
 if __name__ == '__main__':
     print (Variable(1))

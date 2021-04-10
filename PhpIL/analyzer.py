@@ -128,9 +128,9 @@ class TypeAnalyzer(Analyzer):
         self.returnStack = []
         self.signatureTracker = {}
 
-    def setType(self, vars, type):
+    def setType(self, vars, dtype):
         for i in vars:
-            self.variableTypes[-1][i] = type
+            self.variableTypes[-1][i] = dtype
 
     def getType(self, var):
         for i in self.variableTypes:
@@ -229,6 +229,10 @@ class TypeAnalyzer(Analyzer):
             self.variableTypes.append({})
             self.returnStack.append([])
             self.signatureTracker[inst.getOutput()] = inst.operation.signature
+        
+        if inst.isBuiltinFunction():
+            self.setType(inst.getAllOutputs(), Types.Function)
+            self.signatureTracker[inst.getOutput()] = inst.operation.signature
 
         if inst.isEndFunction():
             stackFrame = self.variableTypes.pop()
@@ -267,38 +271,38 @@ class TypeAnalyzer(Analyzer):
 if __name__ == '__main__':
     import typesData
     def main():
+        # prog = program.Program([
+        #     instructions.Instruction(operation.LoadInteger(1),False,[variable.Variable(0)]),
+        #     instructions.Instruction(operation.LoadInteger(9),False,[variable.Variable(3)]),
+        #     instructions.Instruction(operation.LoadString("thisisastring"),False,[variable.Variable(1)]),
+        #     instructions.Instruction(operation.LoadInteger(True),False,[variable.Variable(4)]),
+        #     instructions.Instruction(operation.BeginWhile(">"),[variable.Variable(0), variable.Variable(3)]),
+        #     instructions.Instruction(operation.LoadInteger(1337),False,[variable.Variable(6)]),
+        #     instructions.Instruction(operation.BeginIf(),[variable.Variable(2)]),
+        #     instructions.Instruction(operation.LoadString("thisisastring"),False,[variable.Variable(9)]),
+        #     instructions.Instruction(operation.EndIf()),
+        #     instructions.Instruction(operation.BinaryOperation(">"),[variable.Variable(0),variable.Variable(3)],[variable.Variable(5)]),
+        #     instructions.Instruction(operation.EndWhile()),
+        #     instructions.Instruction(operation.LoadInteger(10),False,[variable.Variable(31337)]),
+        # ])
         prog = program.Program([
-            instructions.Instruction(operation.LoadInteger(1),False,[variable.Variable(0)]),
-            instructions.Instruction(operation.LoadInteger(9),False,[variable.Variable(3)]),
-            instructions.Instruction(operation.LoadString("thisisastring"),False,[variable.Variable(1)]),
-            instructions.Instruction(operation.LoadInteger(True),False,[variable.Variable(4)]),
-            instructions.Instruction(operation.BeginWhile(">"),[variable.Variable(0), variable.Variable(3)]),
-            instructions.Instruction(operation.LoadInteger(1337),False,[variable.Variable(6)]),
-            instructions.Instruction(operation.BeginIf(),[variable.Variable(2)]),
-            instructions.Instruction(operation.LoadString("thisisastring"),False,[variable.Variable(9)]),
-            instructions.Instruction(operation.EndIf()),
-            instructions.Instruction(operation.BinaryOperation(">"),[variable.Variable(0),variable.Variable(3)],[variable.Variable(5)]),
-            instructions.Instruction(operation.EndWhile()),
-            instructions.Instruction(operation.LoadInteger(10),False,[variable.Variable(31337)]),
-        ])
-        prog = program.Program([
-            instructions.Instruction(operation.LoadInteger(0), False, [variable.Variable(0)]),
-            instructions.Instruction(operation.LoadInteger(1), False, [variable.Variable(1)]),
-            instructions.Instruction(operation.LoadInteger(10), False, [variable.Variable(2)]),
-            instructions.Instruction(operation.LoadInteger(10), False, [variable.Variable(3)]),
-            instructions.Instruction(operation.LoadInteger(20), False, [variable.Variable(4)]),
-            instructions.Instruction(operation.LoadInteger(5), False, [variable.Variable(5)]),
-            instructions.Instruction(operation.Phi(), [variable.Variable(3)], [variable.Variable(6)]),
-            instructions.Instruction(operation.Phi(), [variable.Variable(4)], [variable.Variable(7)]),
-            instructions.Instruction(operation.BeginFor("++", "<"), [variable.Variable(0),variable.Variable(2),variable.Variable(8)]),
-            instructions.Instruction(operation.BinaryOperation("<"), [variable.Variable(8), variable.Variable(5)], [variable.Variable(6)]),
-            instructions.Instruction(operation.BeginIf(), [variable.Variable(6)], False),
-            instructions.Instruction(operation.LoadInteger(0), False, [variable.Variable(9)]),
-            instructions.Instruction(operation.BeginWhile("<"),[variable.Variable(9), variable.Variable(5)], False ),
-            instructions.Instruction(operation.BinaryOperation("+"), [variable.Variable(6), variable.Variable(1)], [variable.Variable(10)]),
-            instructions.Instruction(operation.Copy(), [variable.Variable(6), variable.Variable(10)]),
-            instructions.Instruction(operation.BinaryOperation("+"), [variable.Variable(9), variable.Variable(1)], [variable.Variable(11)]),
-            instructions.Instruction(operation.Copy(), [variable.Variable(6), variable.Variable(10)]),
+            # instructions.Instruction(operation.LoadInteger(0), False, [variable.Variable(0)]),
+            # instructions.Instruction(operation.LoadInteger(1), False, [variable.Variable(1)]),
+            # instructions.Instruction(operation.LoadInteger(10), False, [variable.Variable(2)]),
+            # instructions.Instruction(operation.LoadInteger(10), False, [variable.Variable(3)]),
+            # instructions.Instruction(operation.LoadInteger(20), False, [variable.Variable(4)]),
+            # instructions.Instruction(operation.LoadInteger(5), False, [variable.Variable(5)]),
+            # instructions.Instruction(operation.Phi(), [variable.Variable(3)], [variable.Variable(6)]),
+            # instructions.Instruction(operation.Phi(), [variable.Variable(4)], [variable.Variable(7)]),
+            # instructions.Instruction(operation.BeginFor("++", "<"), [variable.Variable(0),variable.Variable(2),variable.Variable(8)]),
+            # instructions.Instruction(operation.BinaryOperation("<"), [variable.Variable(8), variable.Variable(5)], [variable.Variable(6)]),
+            # instructions.Instruction(operation.BeginIf(), [variable.Variable(6)], False),
+            # instructions.Instruction(operation.LoadInteger(0), False, [variable.Variable(9)]),
+            # instructions.Instruction(operation.BeginWhile("<"),[variable.Variable(9), variable.Variable(5)], False ),
+            # instructions.Instruction(operation.BinaryOperation("+"), [variable.Variable(6), variable.Variable(1)], [variable.Variable(10)]),
+            # instructions.Instruction(operation.Copy(), [variable.Variable(6), variable.Variable(10)]),
+            # instructions.Instruction(operation.BinaryOperation("+"), [variable.Variable(9), variable.Variable(1)], [variable.Variable(11)]),
+            # instructions.Instruction(operation.Copy(), [variable.Variable(6), variable.Variable(10)]),
 
             instructions.Instruction(operation.BeginFunction(typesData.FunctionSignature(2,[variable.Variable(11)])),False,[variable.Variable(1)],[variable.Variable(10),variable.Variable(11)]),
             instructions.Instruction(operation.BinaryOperation("+"),[variable.Variable(10),variable.Variable(11)],[variable.Variable(2)]),
@@ -308,35 +312,35 @@ if __name__ == '__main__':
             instructions.Instruction(operation.LoadInteger(1337),False,[variable.Variable(4)]),
             instructions.Instruction(operation.CallFunction(2),[variable.Variable(1), variable.Variable(4), variable.Variable(0)],[variable.Variable(6)]),
 
-            instructions.Instruction(operation.EndWhile(), False, False),
+            # instructions.Instruction(operation.EndWhile(), False, False),
 
-            instructions.Instruction(operation.BeginElse(), False, False),
-            instructions.Instruction(operation.LoadInteger(0), False, [variable.Variable(9)]),
-            instructions.Instruction(operation.BeginWhile("<"),[variable.Variable(9), variable.Variable(5)], False ),
-            instructions.Instruction(operation.BinaryOperation("+"), [variable.Variable(7), variable.Variable(1)], [variable.Variable(10)]),
-            instructions.Instruction(operation.Copy(), [variable.Variable(7), variable.Variable(10)]),
-            instructions.Instruction(operation.BinaryOperation("+"), [variable.Variable(9), variable.Variable(1)], [variable.Variable(11)]),
-            instructions.Instruction(operation.Copy(), [variable.Variable(6), variable.Variable(10)]),
-            instructions.Instruction(operation.EndWhile(), False, False),
+            # instructions.Instruction(operation.BeginElse(), False, False),
+            # instructions.Instruction(operation.LoadInteger(0), False, [variable.Variable(9)]),
+            # instructions.Instruction(operation.BeginWhile("<"),[variable.Variable(9), variable.Variable(5)], False ),
+            # instructions.Instruction(operation.BinaryOperation("+"), [variable.Variable(7), variable.Variable(1)], [variable.Variable(10)]),
+            # instructions.Instruction(operation.Copy(), [variable.Variable(7), variable.Variable(10)]),
+            # instructions.Instruction(operation.BinaryOperation("+"), [variable.Variable(9), variable.Variable(1)], [variable.Variable(11)]),
+            # instructions.Instruction(operation.Copy(), [variable.Variable(6), variable.Variable(10)]),
+            # instructions.Instruction(operation.EndWhile(), False, False),
 
-            instructions.Instruction(operation.EndIf(), False, False),
-            instructions.Instruction(operation.EndFor(), False, False),
-            instructions.Instruction(operation.LoadInteger(1),False,[variable.Variable(90)]),
+            # instructions.Instruction(operation.EndIf(), False, False),
+            # instructions.Instruction(operation.EndFor(), False, False),
+            # instructions.Instruction(operation.LoadInteger(1),False,[variable.Variable(90)]),
         ])
-        program.Program([
-            instructions.Instruction(operation.LoadInteger(1),False,[variable.Variable(0)]),
-            instructions.Instruction(operation.BeginFunction(typesData.FunctionSignature(2,[variable.Variable(11)])),False,[variable.Variable(1)],[variable.Variable(10),variable.Variable(11)]),
-            instructions.Instruction(operation.BinaryOperation("+"),[variable.Variable(10),variable.Variable(11)],[variable.Variable(2)]),
-            instructions.Instruction(operation.LoadString("somestring"),False,[variable.Variable(3)]),
-            instructions.Instruction(operation.Return(),[variable.Variable(2)]),
-            instructions.Instruction(operation.EndFunction()),
-            instructions.Instruction(operation.LoadInteger(1337),False,[variable.Variable(4)]),
-            instructions.Instruction(operation.CallFunction(2),[variable.Variable(1), variable.Variable(4), variable.Variable(0)],[variable.Variable(6)]),
-            instructions.Instruction(operation.LoadInteger(1337),False,[variable.Variable(7)]),
-        ])
+        # program.Program([
+        #     instructions.Instruction(operation.LoadInteger(1),False,[variable.Variable(0)]),
+        #     instructions.Instruction(operation.BeginFunction(typesData.FunctionSignature(2,[variable.Variable(11)])),False,[variable.Variable(1)],[variable.Variable(10),variable.Variable(11)]),
+        #     instructions.Instruction(operation.BinaryOperation("+"),[variable.Variable(10),variable.Variable(11)],[variable.Variable(2)]),
+        #     instructions.Instruction(operation.LoadString("somestring"),False,[variable.Variable(3)]),
+        #     instructions.Instruction(operation.Return(),[variable.Variable(2)]),
+        #     instructions.Instruction(operation.EndFunction()),
+        #     instructions.Instruction(operation.LoadInteger(1337),False,[variable.Variable(4)]),
+        #     instructions.Instruction(operation.CallFunction(2),[variable.Variable(1), variable.Variable(4), variable.Variable(0)],[variable.Variable(6)]),
+        #     instructions.Instruction(operation.LoadInteger(1337),False,[variable.Variable(7)]),
+        # ])
         print(prog)
-        ctx = ContextAnalyzer(prog)
-        ctx.doAnalyze()
+        # ctx = ContextAnalyzer(prog)
+        # ctx.doAnalyze()
         #
         # sc = ScopeAnalyzer(prog)
         # sc.doAnalyze()

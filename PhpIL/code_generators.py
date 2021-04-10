@@ -184,7 +184,7 @@ class CodeGenerator:
                 continue
             usableVars.append(i)
         signature = typesData.FunctionSignature(probability.Random.randomInt(1,5), usableVars)
-        function = programBuilder.functionDefination(signature)
+        function = programBuilder.beginFunction(signature)
         programBuilder.generateRandomInst()
         returnValue = programBuilder.randVar()
         CodeGenerator.functionReturnGenerator(programBuilder)
@@ -281,8 +281,8 @@ class CodeGenerator:
     
     @staticmethod
     def builtinGenerator(programBuilder):
-        raise NotImplementedError("Builtin generator is not implemented yet")
-        function = programBuilder.randVar(dtype=typesData.Types.Builtin)
+        # raise NotImplementedError("Builtin generator is not implemented yet")
+        function = probability.Random.chooseUniform(programBuilder.builtins)
         if not isinstance(function, variable.Variable):
             return False
         # recursive = programBuilder.checkRecursion(function)

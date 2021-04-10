@@ -1,4 +1,5 @@
 from . import program
+from . import opcodes
 from . import instructions
 from . import typesData
 from . import analyzer
@@ -7,10 +8,11 @@ from . import operation
 from . import probability
 from . import settings
 from .code_generators import CodeGenerator
+# from utils import extract_builtin_funcs
 
 class ProgramBuilder:
 
-    def __init__(self, prog=False):
+    def __init__(self, prog=False, init_builtins=False):
         if prog == False:
             self.program = program.Program()
         else:
@@ -18,22 +20,37 @@ class ProgramBuilder:
 
         self.nextFreeVariable = self.program.nextVariable
         self.instructionList = []
-        for i in self.program.instructionList:
-            self.instructionList.append(i)
 
         self.seenIntegers = set([])
         self.seenFloats = set([])
         self.seenStrings = set([])
 
         self.scopeAnalyzer = analyzer.ScopeAnalyzer(self.program)
-        self.scopeAnalyzer.doAnalyze()
 
         self.contextAnalyzer = analyzer.ContextAnalyzer(self.program)
-        self.contextAnalyzer.doAnalyze()
 
         self.typeAnalyzer = analyzer.TypeAnalyzer(self.program)
-        self.typeAnalyzer.doAnalyze()
+    
+        self.builtins = []
 
+        if init_builtins is True:
+            self._initialize_builtins()
+
+        for i in self.program.instructionList:
+            self.instructionList.append(i)
+
+    
+    def _initialize_builtins(self):
+        # builtin_func_map = extract_builtin_funcs()
+        builtin_func_map = [{'name': 'var_dump', 'arg_num': 1, 'arg_types': [typesData.Types.Integer]}]
+        for item in builtin_func_map:
+            func_name = item['name']
+            num_args = item['arg_num']
+            arg_types = item['arg_types']
+            signature = typesData.FunctionSignature(num_args, [])
+            signature.setInputTypes(arg_types)
+            function = self.builtinFunction(func_name, signature)
+            self.builtins.append(function)
 
     '''Append a given instruction to the current program after performing analysis'''
     def instructionAppend(self, inst):
@@ -47,8 +64,17 @@ class ProgramBuilder:
 
     '''finish this program builder and save the instructions to the program'''
     def finish(self):
+        self.program = program.Program()
         for i in self.instructionList:
             self.program.append(i)
+        
+        self.scopeAnalyzer = analyzer.ScopeAnalyzer(self.program)
+        self.contextAnalyzer = analyzer.ContextAnalyzer(self.program)
+        self.typeAnalyzer = analyzer.TypeAnalyzer(self.program)
+
+        self.scopeAnalyzer.doAnalyze()
+        self.contextAnalyzer.doAnalyze()
+        self.typeAnalyzer.doAnalyze()
 
         return self.program
 
@@ -189,6 +215,9 @@ class ProgramBuilder:
         for i in range(ops.numTempvars):
             tempVars.append(self.nextVariable())
 
+        if ops.opcode == opcodes.opcodes.BuiltinMethod:
+            outputs = [variable.Variable(ops.name)]
+
         if outputs == []:
             outputs = False
         if tempVars == []:
@@ -225,20 +254,25 @@ class ProgramBuilder:
     def createArray(self, initialValues):
         return self.perform(operation.CreateArray(len(initialValues)), initialValues).getOutput()
 
-    def callFunction(self, funcName, args):
-        return self.perform(operation.CallFunction(len(args) + 1), [funcName] + args).getOutput()
-
     def doPrint(self, value):
         return self.perform(operation.Print(), [value]).getOutput()
 
+    def functionDefination(self, signature):
+        return self.perform(operation.BeginFunction(signature)).getOutput()
+
     #beginFunction is not finished in operation.py
-    def beginFunction(self):
-        return self.perform(operation.BeginFunction()).getOutput()
+    def beginFunction(self, signature):
+        return self.perform(operation.BeginFunction(signature)).getOutput()
+
+    def callFunction(self, funcName, args):
+        return self.perform(operation.CallFunction(len(args) + 1), [funcName] + args).getOutput()
+    
+    def builtinFunction(self, name, signature):
+        return self.perform(operation.BuiltinFunction(name, signature)).getOutput()
 
     #endFunction is not finished in operation.py
     def endFunction(self):
         return self.perform(operation.EndFunction())
-
 
     def beginIf(self, conditional):
         return self.perform(operation.BeginIf(), [conditional])
@@ -309,9 +343,6 @@ class ProgramBuilder:
     #check binaryOperation function once again
     def binaryOperation(self, lhs, rhs, op):
         return self.perform(operation.BinaryOperation(op), [lhs, rhs]).getOutput()
-
-    def functionDefination(self, signature):
-        return self.perform(operation.BeginFunction(signature)).getOutput()
 
     def doInclude(self, value):
         return self.perform(operation.Include(), [value])

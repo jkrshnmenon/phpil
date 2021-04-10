@@ -3,7 +3,7 @@ from jkjh1jkjh1/target-base
 run mkdir /home/hacker/phpil
 copy testing/php.ini /home/hacker/php.ini
 run sudo pip uninstall -y ipython
-run pip install ipython
+run pip install ipython clang
 run mkdir /tmp/coverages
 run mv /home/hacker/targets/php-phpil-asan-src /home/hacker/
 run rm -rf /home/hacker/targets/*
