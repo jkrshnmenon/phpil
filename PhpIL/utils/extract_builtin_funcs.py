@@ -6,8 +6,9 @@ import subprocess
 
 import clang
 import clang.cindex
-#from clang.cindex import TokenKind, CursorKind
 import pwnlib
+
+from typesData import Types
 
 # config
 TARGET_SRC = "../../../targets/orig-php-src/"
@@ -32,9 +33,11 @@ cidx = clang.cindex.Index.create()
 # TODO:
 # 1. parse zend_function_entry ext_functions
 # 2. intercept zend_parse_method_parameters for class functions
+# 3. support php's terrible _OR_NULL postfix, need to change two places
+# 4. support optional arguments
 
 # reference: Zend/zend_API.c zend_parse_arg_impl
-mapping = {
+trans_mapping = {
         "|": "Z_PARAM_OPTIONAL",
         "l": "Z_PARAM_LONG",
         "d": "Z_PARAM_DOUBLE",
@@ -42,7 +45,7 @@ mapping = {
         "s": "Z_PARAM_STRING",
         "p": "Z_PARAM_PATH", # must not contain any null bytes
         "P": "Z_PARAM_PATH", # TODO: difference between p and P?
-        "S": "Z_PARAM_STRING", # TODO: difference between s and S?
+        "S": "Z_PARAM_STR", # the difference between s and S is how it is stored, s: just content, S: both content and length
         "b": "Z_PARAM_BOOL",
         "r": "Z_PARAM_RESOURCE",
         "a": "Z_PARAM_ARRAY",
@@ -58,6 +61,30 @@ mapping = {
         "L": "deprecated",
         "+": "Z_PARAM_VARIADIC(+)",
         "*": "Z_PARAM_VARIADIC(*)",
+        }
+
+arg_mapping = {
+        "Z_PARAM_LONG": "Types.Integer",
+        "Z_PARAM_DOUBLE": "Types.Float",
+        "Z_PARAM_NUMBER": "Types.Float | Types.Integer",
+        "Z_PARAM_STRING": "Types.String",
+        "Z_PARAM_PATH": "Types.String", # TODO: support path
+        "Z_PARAM_PATH_STR": "Types.String", # TODO: support path
+        "Z_PARAM_STR": "Types.String",
+        "Z_PARAM_BOOL": "Types.Boolean",
+        "Z_PARAM_RESOURCE": "Types.Unknown",
+        "Z_PARAM_ARRAY": "Types.Array",
+        "Z_PARAM_ARRAY_EX": "Types.Array", # TODO: diff between ARRAY_EX and ARRAY
+        "Z_PARAM_ARRAY_HT": "Types.Unknown", # TODO: support hash table
+        "Z_PARAM_OBJECT": "Types.Object",
+        "Z_PARAM_OBJECT_OF_CLASS": "Types.Unknown", # TODO: support name of class
+        "Z_PARAM_CLASS": "Types.Class",
+        "Z_PARAM_FUNC": "Types.Function",
+        "Z_PARAM_ZVAL": "Anything",
+
+        "Z_PARAM_ARRAY_HT_OR_STR": "Types.Array", # TODO: to support hash table
+        "Z_PARAM_ARRAY_HT_OR_LONG": "Types.Integer", # TODO: to support hash table
+        "Z_PARAM_ARRAY_OR_OBJECT_HT_EX": "Types.Object", # TODO: to support hash table
         }
 
 def list_builtins():
@@ -96,9 +123,9 @@ def transform(fmt):
     ret = []
     # ignore is_null check, we feed null for every value
     fmt = fmt.replace("!", "")
-    return [calc_arg_bound(fmt)] + [mapping[x] for x in fmt]
+    return [calc_arg_bound(fmt)] + [trans_mapping[x] for x in fmt]
 
-def extract_arg_type_gdb(func):
+def extract_arg_info_gdb(func):
     with tempfile.NamedTemporaryFile(mode="w") as fp:
         script = script_template % (parser_addr, func)
         fp.write(script)
@@ -150,7 +177,7 @@ def get_parse_tokens(func_tokens):
     tokens += ['(', ')']
     return tokens
 
-def extract_arg_type_libclang(func):
+def extract_arg_info_libclang(func):
     output  = subprocess.getoutput(f"grep -r PHP_FUNCTION\({func}\) {TARGET_SRC}")
     if "PHP_FUNCTION" not in output:
         return None
@@ -165,7 +192,7 @@ def extract_arg_type_libclang(func):
         tokens = get_parse_tokens(func_tokens)
         # handle special case where the function does not take arguments
         if not tokens:
-            return []
+            return [(0, 0)]
 
         # parse macros
         last_idx = 0
@@ -188,6 +215,8 @@ def extract_arg_type_libclang(func):
                 continue
 
             op = macro[0]
+            # ignore is_null check, we feed null for every value
+            op = op.replace("_OR_NULL", "")
             if op == "Z_PARAM_VARIADIC":
                 op = "%s(%s)" % (macro[0], macro[2].strip("\'\""))
             args.append(op)
@@ -199,30 +228,50 @@ def extract_arg_type_libclang(func):
             print(tokens)
         return None
 
-def extract_arg_type(func):
+def extract_arg_info(func):
 
-    res = extract_arg_type_gdb(func)
+    res = extract_arg_info_gdb(func)
     if res is not None:
         return res
 
-    res = extract_arg_type_libclang(func)
+    res = extract_arg_info_libclang(func)
     if res is not None:
         return res
 
     return None
 
+def build_func_map(func_name, arg_info):
+    func_map = {"name": func_name, 'arg_num': None, 'arg_types': None}
+    bound = arg_info[0]
+    min_arg_num, max_arg_num = bound
+
+    raw_arg_types = arg_info[1:1+min_arg_num]
+    arg_types = [arg_mapping[x] for x in raw_arg_types]
+
+    func_map['arg_num'] = min_arg_num
+    func_map['arg_types'] = arg_types
+    return func_map
+
 funcs = list_builtins()
 d = {}
+builtin_func_map = []
 
 for func in funcs:
     #if func != 'var_dump':
     #    continue
-    print(f"func: {func}")
-    raw_arg_type = extract_arg_type(func)
-    print(f"arg_type: {raw_arg_type}")
-    if raw_arg_type:
-        d[func] = raw_arg_type
-    #exit(0)
 
-with open("result.json", "w") as f:
-    f.write(json.dumps(d))
+    print(f"func: {func}")
+    raw_arg_info = extract_arg_info(func)
+    print(f"arg_info: {raw_arg_info}")
+
+    if not raw_arg_info:
+        continue
+    try:
+        func_map = build_func_map(func, raw_arg_info)
+        print(func_map)
+        builtin_func_map.append(func_map)
+    except Exception as e:
+        print(e)
+
+with open("builtin_func_map.json", "w") as f:
+    f.write(json.dumps(builtin_func_map))
