@@ -8,8 +8,6 @@ import clang
 import clang.cindex
 import pwnlib
 
-from typesData import Types
-
 # config
 TARGET_SRC = "../../../targets/orig-php-src/"
 TARGET = os.path.join(TARGET_SRC, "sapi/cli/php")
@@ -80,7 +78,10 @@ arg_mapping = {
         "Z_PARAM_OBJECT_OF_CLASS": "Types.Unknown", # TODO: support name of class
         "Z_PARAM_CLASS": "Types.Class",
         "Z_PARAM_FUNC": "Types.Function",
+
         "Z_PARAM_ZVAL": "Anything",
+        "Z_PARAM_VARIADIC(+)": "Variadic",
+        "Z_PARAM_VARIADIC(*)": "Variadic",
 
         "Z_PARAM_ARRAY_HT_OR_STR": "Types.Array", # TODO: to support hash table
         "Z_PARAM_ARRAY_HT_OR_LONG": "Types.Integer", # TODO: to support hash table
@@ -241,7 +242,7 @@ def extract_arg_info(func):
     return None
 
 def build_func_map(func_name, arg_info):
-    func_map = {"name": func_name, 'arg_num': None, 'arg_types': None}
+    func_map = {"name": func_name, 'arg_num': None, 'arg_types': None, 'arg_info': arg_info}
     bound = arg_info[0]
     min_arg_num, max_arg_num = bound
 
@@ -272,6 +273,7 @@ for func in funcs:
         builtin_func_map.append(func_map)
     except Exception as e:
         print(e)
+    #exit()
 
 with open("builtin_func_map.json", "w") as f:
-    f.write(json.dumps(builtin_func_map))
+    f.write(json.dumps(builtin_func_map, indent=4))
