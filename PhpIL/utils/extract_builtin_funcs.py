@@ -10,7 +10,7 @@ import clang.cindex
 import pwnlib
 
 # config
-TARGET_SRC = "./targets/orig-php-src/"
+TARGET_SRC = "../../../targets/orig-php-src/"
 TARGET = os.path.join(TARGET_SRC, "sapi/cli/php")
 #CLANG_LIB_PATH = '/usr/local/lib/'
 #CLANG_INCLUDE_PATH = '/usr/local/lib/clang/11.0.0/include'
@@ -30,8 +30,35 @@ quit
 cidx = clang.cindex.Index.create()
 
 # TODO:
-# parse zend_function_entry ext_functions
-# intercept zend_parse_method_parameters for class functions
+# 1. parse zend_function_entry ext_functions
+# 2. intercept zend_parse_method_parameters for class functions
+
+# reference: Zend/zend_API.c zend_parse_arg_impl
+mapping = {
+        "|": "Z_PARAM_OPTIONAL",
+        "l": "Z_PARAM_LONG",
+        "d": "Z_PARAM_DOUBLE",
+        "n": "Z_PARAM_NUMBER",
+        "s": "Z_PARAM_STRING",
+        "p": "Z_PARAM_PATH", # must not contain any null bytes
+        "P": "Z_PARAM_PATH", # TODO: difference between p and P?
+        "S": "Z_PARAM_STRING", # TODO: difference between s and S?
+        "b": "Z_PARAM_BOOL",
+        "r": "Z_PARAM_RESOURCE",
+        "a": "Z_PARAM_ARRAY",
+        "A": "Z_PARAM_ARRAY", # a and A are the same
+        "h": "Z_PARAM_ARRAY_HT",
+        "H": "Z_PARAM_ARRAY_HT", # h and H are the same, ARRAY_HT is HashTable
+        "o": "Z_PARAM_OBJECT",
+        "O": "Z_PARAM_OBJECT_OF_CLASS",
+        "C": "Z_PARAM_CLASS",
+        "f": "Z_PARAM_FUNC",
+        "z": "Z_PARAM_ZVAL",
+        "Z": "deprecated",
+        "L": "deprecated",
+        "+": "Z_PARAM_VARIADIC(+)",
+        "*": "Z_PARAM_VARIADIC(*)",
+        }
 
 def list_builtins():
     cmd = [TARGET, "-r", "echo json_encode(get_defined_functions());"]
@@ -40,6 +67,36 @@ def list_builtins():
     res = json.loads(output)
     assert 'internal' in res and res['internal']
     return res['internal']
+
+# reference: Zend/zend_API.c zend_parse_va_args
+def calc_arg_bound(fmt):
+    min_num_args = 0
+    max_num_args = 0
+    have_optional = 0
+    have_varargs = 0
+    post_varargs = 0
+    for f in fmt:
+        if f in 'ldsbraoOzZChfAHpSPLn':
+            max_num_args += 1
+        elif f == '|':
+            min_num_args = max_num_args
+            have_optional = 1
+        elif f in '+*':
+            have_varargs = 1
+            if f == '+':
+                max_num_args += 1
+            post_varargs = max_num_args
+    if not have_optional:
+        min_num_args = max_num_args
+    if have_varargs:
+        max_num_args = -1
+    return (min_num_args, max_num_args)
+
+def transform(fmt):
+    ret = []
+    # ignore is_null check, we feed null for every value
+    fmt = fmt.replace("!", "")
+    return [calc_arg_bound(fmt)] + [mapping[x] for x in fmt]
 
 def extract_arg_type_gdb(func):
     with tempfile.NamedTemporaryFile(mode="w") as fp:
@@ -53,7 +110,8 @@ def extract_arg_type_gdb(func):
             return None
         print(lastline.decode())
         assert b':\t' in lastline
-        return re.search(b'\"(.*)\"', lastline).group(1).decode()
+        fmt = re.search(b'\"(.*)\"', lastline).group(1).decode()
+        return transform(fmt)
 
 def get_func_tokens(tu, func):
     raw_tokens = list(tu.get_tokens(extent=tu.cursor.extent))
@@ -128,7 +186,11 @@ def extract_arg_type_libclang(func):
         for macro in macros:
             if not macro[0].startswith("Z_PARAM"):
                 continue
-            args.append(macro[0])
+
+            op = macro[0]
+            if op == "Z_PARAM_VARIADIC":
+                op = "%s(%s)" % (macro[0], macro[2].strip("\'\""))
+            args.append(op)
         return args
 
     except Exception as e:
@@ -153,7 +215,7 @@ funcs = list_builtins()
 d = {}
 
 for func in funcs:
-    #if func != 'str_repeat':
+    #if func != 'var_dump':
     #    continue
     print(f"func: {func}")
     raw_arg_type = extract_arg_type(func)
