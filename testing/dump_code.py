@@ -37,6 +37,8 @@ def main():
     # ])
     # print(prog)
     # pb = program_builder.ProgramBuilder(prog, init_builtins=True)
+    runner = executor.Executor(PHP_BINARY, cmdline_flags=['-c', '/home/hacker/php.ini'], is_stdin=False)
+    watchdog = coverage.Coverage(SANCOV_SCRIPT)
     pb = program_builder.ProgramBuilder(init_builtins=True)
     
     for _ in range(4):
@@ -47,7 +49,14 @@ def main():
     lift = lifter.Lifter(prog)
     lift.doLifting()
     code = lift.getCode()
-    print(code)
+    runner.code = code
+    runner.execute()
+    for sancov_file in watchdog.find_reports('/tmp/coverages'):
+        watchdog.analyze(obj=PHP_BINARY, report_file=sancov_file)
+    watchdog.clear_reports('/tmp/coverages')
+    runner.dump_inputs('/home/hacker/workspace/fuzzer_inputs.json')
+    watchdog.dump_coverage('/home/hacker/workspace/coverage.json')
+
 
 if __name__ == '__main__':
     main()

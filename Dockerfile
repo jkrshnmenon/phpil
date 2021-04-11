@@ -10,6 +10,7 @@ run rm -rf /home/hacker/targets/*
 run mv /home/hacker/php-phpil-asan-src /home/hacker/targets/
 copy PhpIL /home/hacker/phpil/PhpIL
 copy testing /home/hacker/phpil/testing
+run mkdir /home/hacker/workspace
 
 # cmd ["/bin/bash"]
 cmd ["python", "/home/hacker/phpil/testing/main.py"]

@@ -4,7 +4,7 @@ IMAGE_NAME ?= $(notdir $(PWD))
 TAG ?= latest
 CONTAINER_NAME ?= php-debug
 
-.PHONY: build release shell commit run
+.PHONY: build release shell commit run exec
 
 help:
 	@echo ''
@@ -27,10 +27,13 @@ build:
 release: 
 	docker push $(NS)/$(IMAGE_NAME):$(TAG)
 
-shell:
-	docker run --rm -v $(PWD):/home/hacker/phpil --name $(CONTAINER_NAME) -it $(NS)/$(IMAGE_NAME):$(TAG)
+exec:
+	docker run --rm --name $(CONTAINER_NAME) -it $(NS)/$(IMAGE_NAME):$(TAG)
+
+shell: build
+	docker run --rm -v $(PWD):/home/hacker/phpil --name $(CONTAINER_NAME) -it $(NS)/$(IMAGE_NAME):$(TAG) bash
 
 commit: build release
 
-run: build shell
+run: build exec
 	

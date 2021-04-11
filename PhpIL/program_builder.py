@@ -1,3 +1,5 @@
+import os
+import json
 from . import program
 from . import opcodes
 from . import instructions
@@ -8,7 +10,8 @@ from . import operation
 from . import probability
 from . import settings
 from .code_generators import CodeGenerator
-# from utils import extract_builtin_funcs
+
+
 
 class ProgramBuilder:
 
@@ -40,9 +43,23 @@ class ProgramBuilder:
             self.instructionList.append(i)
 
     
+    def _read_builtin_funcs(self, filename='utils/builtin_func_map.json'):
+        utils_dir = os.path.abspath(os.path.join(__file__, '..', filename))
+        with open(utils_dir, 'r') as f:
+            func_map = json.load(f)
+        
+        retval = []
+        allowed_types = ["Types.Integer", "Types.String"]
+
+        for item in func_map:
+            if any([x for x in set(item['arg_types']) if x not in allowed_types]):
+                continue
+            retval.append(item)
+        return retval 
+
     def _initialize_builtins(self):
-        # builtin_func_map = extract_builtin_funcs()
-        builtin_func_map = [{'name': 'var_dump', 'arg_num': 1, 'arg_types': [typesData.Types.Integer]}]
+        builtin_func_map = self._read_builtin_funcs()
+        # builtin_func_map = [{'name': 'var_dump', 'arg_num': 1, 'arg_types': [typesData.Types.Integer]}]
         for item in builtin_func_map:
             func_name = item['name']
             num_args = item['arg_num']
