@@ -54,6 +54,8 @@ class ProgramBuilder:
         for item in func_map:
             if any([x for x in set(item['arg_types']) if x not in allowed_types]):
                 continue
+            dtypes = [eval(f"typesData.{x}") for x in item['arg_types']]
+            item['arg_types'] = dtypes
             retval.append(item)
         return retval 
 

@@ -22,7 +22,7 @@ def main():
     watchdog = coverage.Coverage(SANCOV_SCRIPT)
     while True:
         try:
-            pb = program_builder.ProgramBuilder()
+            pb = program_builder.ProgramBuilder(init_builtins=True)
             for _ in range(4):
                 pb.generateRandomInst()
 

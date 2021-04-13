@@ -9,7 +9,7 @@ except ImportError:
     import subprocess
 
 logger = logging.getLogger('Executor')
-logging.getLogger('pwnlib.tubes.process.process').setLevel(logging.ERROR)
+# logging.getLogger('pwnlib.tubes.process.process').setLevel(logging.ERROR)
 
 
 
