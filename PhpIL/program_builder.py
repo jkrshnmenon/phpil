@@ -49,7 +49,7 @@ class ProgramBuilder:
             func_map = json.load(f)
         
         retval = []
-        allowed_types = ["Types.Integer", "Types.String"]
+        allowed_types = ["Types.Integer", "Types.String", "Types.Float", "Types.Bool", "Types.Unknown"]
 
         for item in func_map:
             if any([x for x in set(item['arg_types']) if x not in allowed_types]):
