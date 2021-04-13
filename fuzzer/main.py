@@ -1,6 +1,9 @@
 import os
 import sys
+import time
 import logging
+
+import tqdm
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
@@ -11,7 +14,7 @@ from PhpIL import executor
 from PhpIL import coverage
 
 logger = logging.getLogger('Executor')
-logging.basicConfig(level=logging.DEBUG, format='%(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.ERROR, format='%(name)s - %(levelname)s - %(message)s')
 
 
 PHP_BINARY = '/home/hacker/targets/php-phpil-asan-src/sapi/cli/php'
@@ -24,11 +27,9 @@ class Fuzzer:
         self.args = args
         self.runner = executor.Executor(self.binary, cmdline_flags=args, is_stdin=False)
         self.watchdog = coverage.Coverage(SANCOV_SCRIPT)
+        self.start_time = time.time()
 
         os.system(f"mkdir -p {COVERAGE_DIR}")
-
-    def tick(self):
-        pass
 
     def generate_input(self):
         pb = program_builder.ProgramBuilder(init_builtins=True)
@@ -40,7 +41,6 @@ class Fuzzer:
         lift = lifter.Lifter(prog)
         lift.doLifting()
         code = lift.getCode()
-        print(code)
         return code
 
     def collect_feedback(self):
@@ -58,8 +58,10 @@ class Fuzzer:
         self.collect_feedback()
 
     def run(self):
+        pbar = tqdm.tqdm(bar_format="\rrate: {rate}\n")
         while True:
             try:
+                pbar.update(1)
                 self.run_once()
             except KeyboardInterrupt:
                 self.runner.dump_inputs('/home/hacker/workspace/fuzzer_inputs.json')
