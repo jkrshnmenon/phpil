@@ -46,6 +46,7 @@ class ScopeAnalyzer(Analyzer):
                 self.scopes[-1].update([out])
 
         if inst.getOpcode() == opcodes.opcodes.BeginFunction:
+            import IPython; IPython.embed()
             self.stack.append(inst.getOutput())
         else:
             self.scopes[-1].update(inst.getAllOutputs())
@@ -236,6 +237,7 @@ class TypeAnalyzer(Analyzer):
 
         if inst.isEndFunction():
             stackFrame = self.variableTypes.pop()
+            print(self.returnStack)
             returnType = self.returnStack.pop()[0]
             func = self.stack.pop()
             signature = func.operation.signature

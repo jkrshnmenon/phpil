@@ -60,6 +60,8 @@ class Lifter:
                 if code[-2:] == ', ':
                     code = code[:-2]
                 code += " ){"
+            else:
+                code += "{"
 
             self.emit(code)
             self.emitter.increaseIndentLevel()
@@ -81,7 +83,7 @@ class Lifter:
 
 
         if opcode == opcodes.LoadNull:
-            self.emitline(str(inst.getOutput()) + " = NULL")
+            self.emitline(str(inst.getOutput()) + " = null")
 
         if opcode == opcodes.Return:
             self.emitline("return " + str(inst.getInput()))
