@@ -32,14 +32,18 @@ def main():
     #pb.endFunction()
     #prog = pb.finish()
 
+    str_repeat = variable.Variable(100)
+    str_repeat.set_repr("str_repeat")
+    var_dump = variable.Variable(101)
+    var_dump.set_repr("var_dump")
     prog = program.Program([
         instructions.Instruction(operation.LoadNull(), False, [variable.Variable(0)]),
         instructions.Instruction(operation.LoadString('x'), False, [variable.Variable(1)]),
         instructions.Instruction(operation.BeginFunction(typesData.FunctionSignature(2, [])),False, [variable.Variable(2)],[variable.Variable(3),variable.Variable(4)]),
         instructions.Instruction(operation.LoadInteger(8), False, [variable.Variable(5)]),
-        instructions.Instruction(operation.CallFunction(2),[variable.Variable('str_repeat'), variable.Variable(4), variable.Variable(5)],[variable.Variable(6)]),
+        instructions.Instruction(operation.CallFunction(2),[str_repeat, variable.Variable(4), variable.Variable(5)],[variable.Variable(6)]),
         instructions.Instruction(operation.BinaryOperation("."),[variable.Variable(3), variable.Variable(6)],[variable.Variable(7)]),
-        instructions.Instruction(operation.CallFunction(1),[variable.Variable('var_dump'), variable.Variable(7)],[variable.Variable(8)]),
+        instructions.Instruction(operation.CallFunction(1),[var_dump, variable.Variable(7)],[variable.Variable(8)]),
         instructions.Instruction(operation.EndFunction()),
         instructions.Instruction(operation.CallFunction(2),[variable.Variable(2), variable.Variable(0), variable.Variable(1)],[variable.Variable(6)]),
     ])

@@ -46,7 +46,7 @@ class Operation(object):
         if self.numInputs > 0:
             input = ''.join(input.rsplit(',', 1)) + ""
 
-        return output + opcode_list[self.opcode] + " " + input
+        return output + opcode_list[self.opcode.value] + " " + input
 
 class Nop(Operation):
     def __init__(self):
@@ -60,7 +60,7 @@ class LoadInteger(Operation):
         self.value = value
 
     def __str__(self):
-        return "out0 = " + opcode_list[self.opcode] + " " + "'" + str(self.value) + "'"
+        return "out0 = " + opcode_list[self.opcode.value] + " " + "'" + str(self.value) + "'"
 
 class LoadFloat(Operation):
     def __init__(self, value):
@@ -69,7 +69,7 @@ class LoadFloat(Operation):
         self.value = value
 
     def __str__(self):
-        return "out0 = " + opcode_list[self.opcode] + " " + "'" + str(self.value) + "'"
+        return "out0 = " + opcode_list[self.opcode.value] + " " + "'" + str(self.value) + "'"
 
 class LoadString(Operation):
     def __init__(self, value):
@@ -78,7 +78,7 @@ class LoadString(Operation):
         self.value = value
 
     def __str__(self):
-        return "out0 = " + opcode_list[self.opcode] + " " + "'" + str(self.value) + "'"
+        return "out0 = " + opcode_list[self.opcode.value] + " " + "'" + str(self.value) + "'"
 
 class LoadBoolean(Operation):
     def __init__(self, value):
@@ -87,7 +87,7 @@ class LoadBoolean(Operation):
         self.value = value
 
     def __str__(self):
-        return "out0 = " + opcode_list[self.opcode] + " " + "'" + str(self.value) + "'"
+        return "out0 = " + opcode_list[self.opcode.value] + " " + "'" + str(self.value) + "'"
 
 class LoadNull(Operation):
     def __init__(self):
@@ -138,7 +138,7 @@ class BeginWhile(Operation):
 
     def __str__(self):
         input = " inp0, " + str(self.comparater) + ", inp1"
-        return opcode_list[self.opcode] + input
+        return opcode_list[self.opcode.value] + input
 
 
 class EndWhile(Operation):
@@ -155,7 +155,7 @@ class BeginFor(Operation):
 
     def __str__(self):
         input = " inp0, "+str(self.op)+" , inp1, "+str(self.comparater)+" ,inp2"
-        return opcode_list[self.opcode] + input
+        return opcode_list[self.opcode.value] + input
 
 class EndFor(Operation):
     def __init__(self):
@@ -200,7 +200,7 @@ class UnaryOperation(Operation):
         self.op = op
 
     def __str__(self):
-        return "out0 = " + opcode_list[self.opcode] + " " + str(self.op) + " inp0"
+        return "out0 = " + opcode_list[self.opcode.value] + " " + str(self.op) + " inp0"
 
 class BinaryOperation(Operation):
     def __init__(self, op):
@@ -209,7 +209,7 @@ class BinaryOperation(Operation):
         self.op = op
 
     def __str__(self):
-        return "out0 = " + opcode_list[self.opcode] + " inp0, " + str(self.op) + " ,inp1"
+        return "out0 = " + opcode_list[self.opcode.value] + " inp0, " + str(self.op) + " ,inp1"
 
 
 class Include(Operation):
