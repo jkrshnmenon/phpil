@@ -14,7 +14,7 @@ class Variable:
         if isinstance(self.id, int):
             retval = "$v"+str(self.id)
         else:
-            retval = "$" + self.id
+            retval = self.id
         return retval
 
     def __hash__(self):
