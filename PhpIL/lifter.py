@@ -12,6 +12,7 @@ class Lifter:
     def __init__(self, prog):
         self.program = prog
         self.emitter = codeEmitter.CodeEmitter()
+        self._prefix = None
 
     def emit(self, text):
         self.emitter.emit(text)
@@ -26,9 +27,13 @@ class Lifter:
         for i in self.program.instructionList:
             self.lift(i)
 
-    def lift(self,inst):
+    def lift(self, inst):
 
         opcode = inst.getOpcode()
+
+        # only process prefix for certain operations
+        if self._prefix and inst.operation.opcode not in [Opcode.CallFunction, Opcode.UnaryOperation, Opcode.BinaryOperation]:
+            self._prefix = None
 
         if opcode == Opcode.LoadInteger or \
             opcode == Opcode.LoadFloat or \
@@ -75,12 +80,15 @@ class Lifter:
             output = str(inst.getOutput())
             func = inst.getInput()
 
-            code = output + " = " + str(func)+"( "
-            code += ", ".join([str(x) for x in inst.getAllInputs()[1:]])
-            code += ")"
+            inp_code = str(func)+"( "
+            inp_code += ", ".join([str(x) for x in inst.getAllInputs()[1:]])
+            inp_code += ")"
+            if self._prefix:
+                inp_code = f"{self._prefix}.({inp_code})"
+                self._prefix = None
+            code = f"{output} = {inp_code}"
 
             self.emitline(code)
-
 
         if opcode == Opcode.LoadNull:
             self.emitline(str(inst.getOutput()) + " = null")
@@ -121,10 +129,13 @@ class Lifter:
             if op == operation.UnaryOperator.LogicalNot:
                 commonCode = str(inst.operation.op) + str(inst.getInput())
 
+            if self._prefix:
+                commonCode = f"{self._prefix}.({commonCode})"
             code += commonCode
             altCode += commonCode
             self.emitline(code)
             self.emitline(altCode)
+            self._prefix = None
 
         if opcode == Opcode.BinaryOperation:
             out = str(inst.getOutput())
@@ -134,11 +145,18 @@ class Lifter:
             op = inst.operation.op
             if(op == operation.BinaryOperator.LShift or op == operation.BinaryOperator.RShift):
                 code = inp1 + str(inst.operation.op) + inp2
+                if self._prefix:
+                    code = f"{self._prefix}.({code})"
+                    self._prefix = None
                 code = "if("+inp2+">0){"+ out + " = " + code + ";" +"}"
                 self.emit(code)
             else:
                 code = inp1 + str(inst.operation.op) + inp2
+                if self._prefix:
+                    code = f"{self._prefix}.({code})"
                 self.emitline(out+" = " + code)
+
+            self._prefix = None
 
 
         if opcode == Opcode.BeginFor:
@@ -243,6 +261,8 @@ class Lifter:
             code += " = " + str(inst.getInput(2))
             self.emitline(code)
 
+        if opcode == Opcode.VarPrefix:
+            self._prefix = inst.inputs[0]
 
 if __name__ == '__main__':
     def main():

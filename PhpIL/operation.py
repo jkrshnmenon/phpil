@@ -305,6 +305,10 @@ class Print(Operation):
     def __init__(self):
         super(Print, self).__init__(numInputs = 1, numOutputs= 0, numTempvars = 0, attributes = [])
         self.opcode = Opcode.Print
+class VarPrefix(Operation):
+    def __init__(self):
+        super(VarPrefix, self).__init__(numInputs = 1, numOutputs=0, numTempvars = 0, attributes = [])
+        self.opcode = Opcode. VarPrefix
 
 class Comparater:
     equal               = "=="
