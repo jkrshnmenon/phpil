@@ -13,9 +13,10 @@ logger = logging.getLogger('Coverage')
 class Coverage:
     '''
     '''
-    def __init__(self, sancov_script, report_path=None):
+    def __init__(self, sancov_script, report_path=None, output_dir=None):
         self._script_path = sancov_script
         self._report_path = report_path
+        self._output_dir = output_dir
         self._hash_map = {}
     
     def _make_hash(self, e1, e2):
@@ -40,7 +41,7 @@ class Coverage:
             logger.info("No coverages to dump")
             return
         
-        with open(filename, 'w') as f:
+        with open(f'{self._output_dir}/{filename}', 'w') as f:
             json.dump(self._hash_map, f, indent=2)
 
     def find_reports(self, report_dir):

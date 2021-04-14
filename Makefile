@@ -12,7 +12,8 @@ help:
 	@echo 'Targets:'
 	@echo '  build    	build docker image $(NS)/$(IMAGE_NAME):$(TAG)'
 	@echo '  release	push docker image $(NS)/$(IMAGE_NAME):$(TAG)'
-	@echo '  shell		run docker container for image $(NS)/$(IMAGE_NAME):$(TAG) as $(CONTAINER_NAME)'
+	@echo '  shell		debug container for image $(NS)/$(IMAGE_NAME):$(TAG) as $(CONTAINER_NAME)'
+	@echo '  exec		run container for image $(NS)/$(IMAGE_NAME):$(TAG) as $(CONTAINER_NAME)'
 	@echo '  commit	build and push docker image $(NS)/$(IMAGE_NAME):$(TAG)'
 	@echo '  run		build and run docker image $(NS)/$(IMAGE_NAME):$(TAG) as $(CONTAINER_NAME)'
 	@echo ''
@@ -28,7 +29,7 @@ release:
 	docker push $(NS)/$(IMAGE_NAME):$(TAG)
 
 exec:
-	docker run --rm --name $(CONTAINER_NAME) -it $(NS)/$(IMAGE_NAME):$(TAG)
+	docker run --rm -v $(PWD)/workspace:/home/hacker/workspace --name $(CONTAINER_NAME) -it $(NS)/$(IMAGE_NAME):$(TAG)
 
 shell: build
 	docker run --rm -v $(PWD):/home/hacker/phpil --name $(CONTAINER_NAME) -it $(NS)/$(IMAGE_NAME):$(TAG) bash

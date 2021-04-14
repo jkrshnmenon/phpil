@@ -18,8 +18,8 @@ PHP_BINARY = '/home/hacker/targets/php-phpil-asan-src/sapi/cli/php'
 SANCOV_SCRIPT = '/home/hacker/phpil/testing/sancov.py'
 
 def main():
-    runner = executor.Executor(PHP_BINARY, cmdline_flags=['-c', '/home/hacker/php.ini'], is_stdin=False)
-    watchdog = coverage.Coverage(SANCOV_SCRIPT)
+    runner = executor.Executor(PHP_BINARY, output_dir='/home/hacker/workspace', cmdline_flags=['-c', '/home/hacker/php.ini'], is_stdin=False)
+    watchdog = coverage.Coverage(SANCOV_SCRIPT, output_dir='/home/hacker/workspace')
     while True:
         try:
             pb = program_builder.ProgramBuilder(init_builtins=True)
@@ -34,14 +34,15 @@ def main():
             # print(code)
             # Mutate code
             runner.code = code
-            runner.execute()
+            runner.execute(save_input=True)
             for sancov_file in watchdog.find_reports('/tmp/coverages'):
                 watchdog.analyze(obj=PHP_BINARY, report_file=sancov_file)
             watchdog.clear_reports('/tmp/coverages')
-        except KeyboardInterrupt:
-            runner.dump_inputs('/home/hacker/workspace/fuzzer_inputs.json')
-            watchdog.dump_coverage('/home/hacker/workspace/coverage.json')
+        except:
+            runner.dump_inputs('fuzzer_inputs.json')
+            watchdog.dump_coverage('coverage.json')
             break
+
 
 if __name__ == '__main__':
     main()

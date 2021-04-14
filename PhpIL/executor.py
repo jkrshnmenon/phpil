@@ -17,9 +17,10 @@ class Executor:
     '''
     This class takes care of executing the target binary with the inputs
     '''
-    def __init__(self, binary, cmdline_flags=None, code=None, is_stdin=False, extra_args=None):
+    def __init__(self, binary, output_dir, cmdline_flags=None, code=None, is_stdin=False, extra_args=None):
         '''
         @param binary:          The path to the binary
+        @param output_dir:      The directory to store the outputs and inputs in
         @param cmdline_flags:   The command line flags to the binary
         @param code:            The fuzzer generated program
                                 Code can be none so that this object can be re-used for other inputs.
@@ -28,6 +29,7 @@ class Executor:
         '''
         self._program_path = binary
         self._program_args = cmdline_flags
+        self._output_dir = output_dir
         self._extra_args = [] if extra_args is None else extra_args
         self._is_stdin = is_stdin
         self._code = code
@@ -41,10 +43,13 @@ class Executor:
     def code(self, code_obj):
         self._code = code_obj
     
-    def execute(self, collect_stderr=False):
+    def execute(self, collect_stderr=False, save_input=False):
         logger.info("Executing %s" % self._program_path)
         assert collect_stderr is False, "Not Implemented!"
         assert self._code is not None, "There is no code to run!"
+        if save_input is True:
+            with open(f'{self._output_dir}/saved_input.php', 'w') as f:
+                f.write(self._code)
         if self._is_stdin:
             logger.info("Running with stdin")
             return self._run_with_input()
@@ -61,7 +66,7 @@ class Executor:
             logger.info("No interesting inputs yet")
             return
         
-        with open(filename, 'w') as f:
+        with open(f'{self._output_dir}/{filename}', 'w') as f:
             json.dump(self._non_zero_exits, f, indent=2)
     
     def _run_with_input(self):

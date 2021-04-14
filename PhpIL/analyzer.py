@@ -235,7 +235,7 @@ class TypeAnalyzer(Analyzer):
 
         if inst.isEndFunction():
             stackFrame = self.variableTypes.pop()
-            print(self.returnStack)
+            # print(self.returnStack)
             returnType = self.returnStack.pop()[0]
             func = self.stack.pop()
             signature = func.operation.signature
