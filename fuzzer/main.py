@@ -58,7 +58,7 @@ class Fuzzer:
         self.collect_feedback()
 
     def run(self):
-        pbar = tqdm.tqdm(bar_format="\rrate: {rate}\n")
+        pbar = tqdm.tqdm(bar_format="\rexec speed: {rate}\n")
         while True:
             try:
                 pbar.update(1)

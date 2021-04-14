@@ -31,7 +31,7 @@
         "name": "property_exists",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
+            "Anything",
             "Types.String"
         ],
         "arg_info": [
@@ -798,7 +798,7 @@
         "name": "exif_read_data",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -816,7 +816,7 @@
         "name": "exif_thumbnail",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -930,7 +930,7 @@
         "name": "mime_content_type",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -979,7 +979,7 @@
         "name": "filter_var",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -1275,8 +1275,8 @@
         "name": "hash_equals",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
-            "Types.Unkown"
+            "Anything",
+            "Anything"
         ],
         "arg_info": [
             [
@@ -1482,7 +1482,7 @@
         "name": "json_encode",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -1539,7 +1539,7 @@
         "name": "class_implements",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -1555,7 +1555,7 @@
         "name": "class_parents",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -1571,7 +1571,7 @@
         "name": "class_uses",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -1883,7 +1883,7 @@
         "name": "posix_ttyname",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -1897,7 +1897,7 @@
         "name": "posix_isatty",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -2730,7 +2730,7 @@
         "name": "count",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -2866,7 +2866,7 @@
         "name": "min",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -2880,7 +2880,7 @@
         "name": "max",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -2894,7 +2894,7 @@
         "name": "compact",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -2910,7 +2910,7 @@
         "arg_types": [
             "Types.Integer",
             "Types.Integer",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -2927,7 +2927,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.Array",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -2942,8 +2942,8 @@
         "name": "range",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
-            "Types.Unkown"
+            "Anything",
+            "Anything"
         ],
         "arg_info": [
             [
@@ -3146,7 +3146,7 @@
         "arg_types": [
             "Types.Array",
             "Types.Integer",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -3208,7 +3208,7 @@
         "name": "array_intersect_key",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -3222,7 +3222,7 @@
         "name": "array_intersect_ukey",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
+            "Variadic",
             "Types.Function"
         ],
         "arg_info": [
@@ -3238,7 +3238,7 @@
         "name": "array_intersect",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -3252,7 +3252,7 @@
         "name": "array_uintersect",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
+            "Variadic",
             "Types.Function"
         ],
         "arg_info": [
@@ -3268,7 +3268,7 @@
         "name": "array_intersect_assoc",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -3282,7 +3282,7 @@
         "name": "array_uintersect_assoc",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
+            "Variadic",
             "Types.Function"
         ],
         "arg_info": [
@@ -3298,7 +3298,7 @@
         "name": "array_intersect_uassoc",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
+            "Variadic",
             "Types.Function"
         ],
         "arg_info": [
@@ -3314,7 +3314,7 @@
         "name": "array_uintersect_uassoc",
         "arg_num": 3,
         "arg_types": [
-            "Types.Unkown",
+            "Variadic",
             "Types.Function",
             "Types.Function"
         ],
@@ -3332,7 +3332,7 @@
         "name": "array_diff_key",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -3346,7 +3346,7 @@
         "name": "array_diff_ukey",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
+            "Variadic",
             "Types.Function"
         ],
         "arg_info": [
@@ -3362,7 +3362,7 @@
         "name": "array_diff",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -3376,7 +3376,7 @@
         "name": "array_udiff",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
+            "Variadic",
             "Types.Function"
         ],
         "arg_info": [
@@ -3392,7 +3392,7 @@
         "name": "array_diff_assoc",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -3406,7 +3406,7 @@
         "name": "array_diff_uassoc",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
+            "Variadic",
             "Types.Function"
         ],
         "arg_info": [
@@ -3422,7 +3422,7 @@
         "name": "array_udiff_assoc",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
+            "Variadic",
             "Types.Function"
         ],
         "arg_info": [
@@ -3438,7 +3438,7 @@
         "name": "array_udiff_uassoc",
         "arg_num": 3,
         "arg_types": [
-            "Types.Unkown",
+            "Variadic",
             "Types.Function",
             "Types.Function"
         ],
@@ -3456,7 +3456,7 @@
         "name": "array_multisort",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -3550,7 +3550,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.Function",
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -3565,7 +3565,7 @@
         "name": "array_key_exists",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
+            "Anything",
             "Types.Unknown"
         ],
         "arg_info": [
@@ -4058,7 +4058,7 @@
         "name": "print_r",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -4746,7 +4746,7 @@
         "name": "assert",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -5450,7 +5450,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.Integer",
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -5466,7 +5466,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.String",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -6313,7 +6313,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.String",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -7160,8 +7160,8 @@
         "name": "pow",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
-            "Types.Unkown"
+            "Anything",
+            "Anything"
         ],
         "arg_info": [
             [
@@ -7519,7 +7519,7 @@
         "arg_types": [
             "Types.Array",
             "Types.Array",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8159,7 +8159,7 @@
         "name": "stream_is_local",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8221,7 +8221,7 @@
         "name": "gettype",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8235,7 +8235,7 @@
         "name": "get_debug_type",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8249,7 +8249,7 @@
         "name": "settype",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
+            "Anything",
             "Types.String"
         ],
         "arg_info": [
@@ -8265,7 +8265,7 @@
         "name": "intval",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8281,7 +8281,7 @@
         "name": "floatval",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8295,7 +8295,7 @@
         "name": "boolval",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8309,7 +8309,7 @@
         "name": "strval",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8323,7 +8323,7 @@
         "name": "is_bool",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8337,7 +8337,7 @@
         "name": "is_numeric",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8351,7 +8351,7 @@
         "name": "is_scalar",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8365,7 +8365,7 @@
         "name": "is_callable",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8382,7 +8382,7 @@
         "name": "is_iterable",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8396,7 +8396,7 @@
         "name": "is_countable",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8527,7 +8527,7 @@
         "name": "stream_bucket_new",
         "arg_num": 2,
         "arg_types": [
-            "Types.Unkown",
+            "Anything",
             "Types.String"
         ],
         "arg_info": [
@@ -8598,7 +8598,7 @@
         "name": "var_dump",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -8612,7 +8612,7 @@
         "name": "var_export",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8628,7 +8628,7 @@
         "name": "debug_zval_dump",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Variadic"
         ],
         "arg_info": [
             [
@@ -8642,7 +8642,7 @@
         "name": "serialize",
         "arg_num": 1,
         "arg_types": [
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8790,8 +8790,8 @@
         "arg_num": 3,
         "arg_types": [
             "Types.Unknown",
-            "Types.Unkown",
-            "Types.Unkown"
+            "Anything",
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8808,7 +8808,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.Unknown",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8824,7 +8824,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.Unknown",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8840,7 +8840,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.Unknown",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8856,7 +8856,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.Unknown",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8872,7 +8872,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.Unknown",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8888,7 +8888,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.Unknown",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8904,7 +8904,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.Unknown",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8920,7 +8920,7 @@
         "arg_num": 2,
         "arg_types": [
             "Types.Unknown",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -8955,7 +8955,7 @@
         "arg_types": [
             "Types.Unknown",
             "Types.String",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [
@@ -9059,7 +9059,7 @@
         "arg_types": [
             "Types.Unknown",
             "Types.Integer",
-            "Types.Unkown"
+            "Anything"
         ],
         "arg_info": [
             [

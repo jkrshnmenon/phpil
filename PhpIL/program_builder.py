@@ -46,15 +46,19 @@ class ProgramBuilder:
     def _read_builtin_funcs(self, filename='utils/builtin_func_map.json'):
         utils_dir = os.path.abspath(os.path.join(__file__, '..', filename))
         with open(utils_dir, 'r') as f:
-            func_map = json.load(f)
+            content = f.read()
+            content = content.replace("Types.Unknown", "Types.Bad")
+            content = content.replace("Anything", "Types.Unknown")
+            content = content.replace("Variadic", "Types.Unknown")
+            func_map = json.loads(content)
         
         retval = []
-        allowed_types = ["Types.Integer", "Types.String", "Types.Float", "Types.Boolean", "Types.Unknown"]
 
         for item in func_map:
-            if any([x for x in set(item['arg_types']) if x not in allowed_types]):
+            # TODO: we currently do not handle functions that take in resource-like object as input
+            if 'Types.Bad' in item['arg_types'] or 'Types.Class' in item['arg_types']:
                 continue
-            dtypes = [eval(f"typesData.{x}") for x in item['arg_types']]
+            dtypes = [eval(x.replace("Types.", "typesData.Types.")) for x in item['arg_types']]
             item['arg_types'] = dtypes
             retval.append(item)
         return retval 
