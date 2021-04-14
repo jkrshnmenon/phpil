@@ -46,7 +46,6 @@ class ScopeAnalyzer(Analyzer):
                 self.scopes[-1].update([out])
 
         if inst.getOpcode() == opcodes.opcodes.BeginFunction:
-            import IPython; IPython.embed()
             self.stack.append(inst.getOutput())
         else:
             self.scopes[-1].update(inst.getAllOutputs())
