@@ -1,7 +1,6 @@
 import os
 import json
 from . import program
-from . import opcodes
 from . import instructions
 from . import typesData
 from . import analyzer
@@ -9,6 +8,7 @@ from . import variable
 from . import operation
 from . import probability
 from . import settings
+from .opcode import Opcode
 from .code_generators import CodeGenerator
 
 
@@ -242,7 +242,7 @@ class ProgramBuilder:
         for i in range(ops.numTempvars):
             tempVars.append(self.nextVariable())
 
-        if ops.opcode == opcodes.opcodes.BuiltinMethod:
+        if ops.opcode == Opcode.BuiltinMethod:
             outputs = [variable.Variable(ops.name)]
 
         if outputs == []:

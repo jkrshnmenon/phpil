@@ -1,4 +1,4 @@
-from . import opcodes
+from .opcode import Opcode
 
 class Program:
 
@@ -18,7 +18,7 @@ class Program:
         indentLevel = 0
         for i, ins in enumerate(self.instructionList):
 
-            if ins.isBlockEnd() or ins.operation.opcode == opcodes.opcodes.BeginElse:
+            if ins.isBlockEnd() or ins.operation.opcode == Opcode.BeginElse:
                 indentLevel -= 1
             string += (str(i) + ": ").ljust(5,' ') + "\t"*indentLevel + str(ins) + "\n"
             if ins.isBlockBegin():
@@ -27,7 +27,6 @@ class Program:
         return string
 
 if __name__ == '__main__':
-    from . import opcodes
     from . import operation
     from . import variable
     from . import instructions

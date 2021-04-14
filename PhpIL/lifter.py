@@ -5,7 +5,7 @@ from . import probability
 from . import operation
 from . import variable
 from . import typesData
-from .opcodes import opcodes
+from .opcode import Opcode
 
 class Lifter:
 
@@ -30,19 +30,19 @@ class Lifter:
 
         opcode = inst.getOpcode()
 
-        if opcode == opcodes.LoadInteger or \
-            opcode == opcodes.LoadFloat or \
-            opcode == opcodes.LoadBoolean:
+        if opcode == Opcode.LoadInteger or \
+            opcode == Opcode.LoadFloat or \
+            opcode == Opcode.LoadBoolean:
 
             self.emitline(str(inst.getOutput()) + " = " + str(inst.operation.value))
 
-        if opcode == opcodes.LoadString:
+        if opcode == Opcode.LoadString:
             self.emitline(str(inst.getOutput()) + " = \"" + str(inst.operation.value)+"\"")
 
-        if opcode == opcodes.Nop:
+        if opcode == Opcode.Nop:
             pass
 
-        if opcode == opcodes.BeginFunction:
+        if opcode == Opcode.BeginFunction:
             output = inst.getOutput()
             signature = inst.operation.signature
             args = inst.getAllTemps()
@@ -66,12 +66,12 @@ class Lifter:
             self.emit(code)
             self.emitter.increaseIndentLevel()
 
-        if opcode == opcodes.EndFunction:
+        if opcode == Opcode.EndFunction:
             self.emitter.decreaseIndentLevel()
             self.emitline("}")
 
 
-        if opcode == opcodes.CallFunction:
+        if opcode == Opcode.CallFunction:
             output = str(inst.getOutput())
             func = inst.getInput()
 
@@ -82,32 +82,32 @@ class Lifter:
             self.emitline(code)
 
 
-        if opcode == opcodes.LoadNull:
+        if opcode == Opcode.LoadNull:
             self.emitline(str(inst.getOutput()) + " = null")
 
-        if opcode == opcodes.Return:
+        if opcode == Opcode.Return:
             self.emitline("return " + str(inst.getInput()))
 
-        if opcode == opcodes.BeginIf:
+        if opcode == Opcode.BeginIf:
             self.emit("if(" + str(inst.getInput(0)) + "){")
             self.emitter.increaseIndentLevel()
 
-        if opcode == opcodes.BeginElse:
+        if opcode == Opcode.BeginElse:
             self.emitter.decreaseIndentLevel()
             self.emit("}else{")
             self.emitter.increaseIndentLevel()
 
-        if opcode == opcodes.EndIf:
+        if opcode == Opcode.EndIf:
             self.emitter.decreaseIndentLevel()
             self.emit("}")
 
-        if opcode == opcodes.Break:
+        if opcode == Opcode.Break:
             self.emitline("break")
 
-        if opcode == opcodes.Continue:
+        if opcode == Opcode.Continue:
             self.emitline("continue")
 
-        if opcode == opcodes.UnaryOperation:
+        if opcode == Opcode.UnaryOperation:
             code = str(inst.getInput()) + " = "
             altCode = str(inst.getOutput()) + " = "
             commonCode = ""
@@ -126,7 +126,7 @@ class Lifter:
             self.emitline(code)
             self.emitline(altCode)
 
-        if opcode == opcodes.BinaryOperation:
+        if opcode == Opcode.BinaryOperation:
             out = str(inst.getOutput())
             inp1 = str(inst.getInput(0))
             inp2 = str(inst.getInput(1))
@@ -141,7 +141,7 @@ class Lifter:
                 self.emitline(out+" = " + code)
 
 
-        if opcode == opcodes.BeginFor:
+        if opcode == Opcode.BeginFor:
             loopvar = inst.getTemp()
             start = inst.getInput(0)
             end = inst.getInput(1)
@@ -156,56 +156,56 @@ class Lifter:
             self.emitter.increaseIndentLevel()
 
 
-        if opcode == opcodes.EndFor:
+        if opcode == Opcode.EndFor:
             self.emitter.decreaseIndentLevel()
             self.emit("}")
 
-        if opcode == opcodes.BeginWhile:
+        if opcode == Opcode.BeginWhile:
             inp = str(inst.getInput(0)) + str(inst.operation.comparater) + str(inst.getInput(1))
             self.emit("while (" + inp + "){")
             self.emitter.increaseIndentLevel()
 
-        if opcode == opcodes.EndWhile:
+        if opcode == Opcode.EndWhile:
             self.emitter.decreaseIndentLevel()
             self.emit("}")
 
-        if opcode == opcodes.BeginDoWhile:
+        if opcode == Opcode.BeginDoWhile:
             self.emit("do{")
             self.emitter.increaseIndentLevel()
 
-        if opcode == opcodes.EndDoWhile:
+        if opcode == Opcode.EndDoWhile:
             self.emitter.decreaseIndentLevel()
             inp = str(inst.getInput(0)) + str(inst.operation.comparater) + str(inst.getInput(1))
             self.emitline("}while(" + inp + ")")
 
 
-        if opcode == opcodes.Include:
+        if opcode == Opcode.Include:
             self.emitline("include "+str(inst.getInput()))
 
-        if opcode == opcodes.Copy:
+        if opcode == Opcode.Copy:
             inp1 = str(inst.getInput(0))
             inp2 = str(inst.getInput(1))
             self.emitline(inp1 + " = " + inp2)
 
-        if opcode == opcodes.Phi:
+        if opcode == Opcode.Phi:
             out = str(inst.getOutput())
             inp = str(inst.getInput())
             self.emitline(out + " = " + inp)
 
-        if opcode == opcodes.BeginTry:
+        if opcode == Opcode.BeginTry:
             self.emit("try{")
             self.emitter.increaseIndentLevel()
 
-        if opcode == opcodes.BeginCatch:
+        if opcode == Opcode.BeginCatch:
             self.emitter.decreaseIndentLevel()
             self.emit("}catch(Exception $e){")
             self.emitter.increaseIndentLevel()
 
-        if opcode == opcodes.EndTryCatch:
+        if opcode == Opcode.EndTryCatch:
             self.emitter.decreaseIndentLevel()
             self.emit("}")
 
-        if opcode == opcodes.CreateArray:
+        if opcode == Opcode.CreateArray:
             code = str(inst.getOutput()) + " = "
             if probability.Random.probability(0.5):
                 code += "[" + ", ".join([str(x) for x in inst.getAllInputs()]) + "]"
@@ -214,7 +214,7 @@ class Lifter:
 
             self.emitline(code)
 
-        if opcode == opcodes.CreateDict:
+        if opcode == Opcode.CreateDict:
             code = str(inst.getOutput()) + " = "
             if probability.Random.probability(0.5):
                 code += "["
@@ -233,12 +233,12 @@ class Lifter:
 
             self.emitline(code)
 
-        if opcode == opcodes.GetArrayElem:
+        if opcode == Opcode.GetArrayElem:
             code = str(inst.getOutput()) + " = "
             code += str(inst.getInput(0)) + "[" + str(inst.getInput(1)) + "]"
             self.emitline(code)
 
-        if opcode == opcodes.SetArrayElem:
+        if opcode == Opcode.SetArrayElem:
             code = str(inst.getInput(0)) + "[" + str(inst.getInput(1)) + "]"
             code += " = " + str(inst.getInput(2))
             self.emitline(code)

@@ -1,4 +1,4 @@
-from . import opcodes
+from .opcode import Opcode, opcode_list
 
 class Operation(object):
 
@@ -46,251 +46,251 @@ class Operation(object):
         if self.numInputs > 0:
             input = ''.join(input.rsplit(',', 1)) + ""
 
-        return output + opcodes.opcodes.opcodeList[self.opcode] + " " + input
+        return output + opcode_list[self.opcode] + " " + input
 
 class Nop(Operation):
     def __init__(self):
         super(Nop, self).__init__(numInputs=0, numOutputs=0, numTempvars=0, attributes=[Operation.Attributes.isPrimitive])
-        self.opcode = opcodes.opcodes.Nop
+        self.opcode = Opcode.Nop
 
 class LoadInteger(Operation):
     def __init__(self, value):
         super(LoadInteger, self).__init__(numInputs=0, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.LoadInteger
+        self.opcode = Opcode.LoadInteger
         self.value = value
 
     def __str__(self):
-        return "out0 = " + opcodes.opcodes.opcodeList[self.opcode] + " " + "'" + str(self.value) + "'"
+        return "out0 = " + opcode_list[self.opcode] + " " + "'" + str(self.value) + "'"
 
 class LoadFloat(Operation):
     def __init__(self, value):
         super(LoadFloat, self).__init__(numInputs=0, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.LoadFloat
+        self.opcode = Opcode.LoadFloat
         self.value = value
 
     def __str__(self):
-        return "out0 = " + opcodes.opcodes.opcodeList[self.opcode] + " " + "'" + str(self.value) + "'"
+        return "out0 = " + opcode_list[self.opcode] + " " + "'" + str(self.value) + "'"
 
 class LoadString(Operation):
     def __init__(self, value):
         super(LoadString, self).__init__(numInputs=0, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.LoadString
+        self.opcode = Opcode.LoadString
         self.value = value
 
     def __str__(self):
-        return "out0 = " + opcodes.opcodes.opcodeList[self.opcode] + " " + "'" + str(self.value) + "'"
+        return "out0 = " + opcode_list[self.opcode] + " " + "'" + str(self.value) + "'"
 
 class LoadBoolean(Operation):
     def __init__(self, value):
         super(LoadBoolean, self).__init__(numInputs=0, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.LoadBoolean
+        self.opcode = Opcode.LoadBoolean
         self.value = value
 
     def __str__(self):
-        return "out0 = " + opcodes.opcodes.opcodeList[self.opcode] + " " + "'" + str(self.value) + "'"
+        return "out0 = " + opcode_list[self.opcode] + " " + "'" + str(self.value) + "'"
 
 class LoadNull(Operation):
     def __init__(self):
         super(LoadNull, self).__init__(numInputs=0, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.LoadNull
+        self.opcode = Opcode.LoadNull
 
 # class LoadObject (Operation):
 #     def __init__(self, value):
 #(LoadObject , self)         super.__init__(numInputs=0, numOutputs=1, numTempvars=0)
-#         self.opcode = opcodes.opcodes.LoadObject
+#         self.opcode = Opcode.LoadObject
 #         self.value = value
 
 class CreateObject(Operation):
     def __init__(self, object, args):
         super(CreateObject, self).__init__(numInputs=1, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.CreateObject
+        self.opcode = Opcode.CreateObject
         self.object = object
         self.args = args
 
 class CreateArray(Operation):
     def __init__(self, numInitialValues):
         super(CreateArray, self).__init__(numInputs=numInitialValues, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.CreateArray
+        self.opcode = Opcode.CreateArray
 
 class BeginIf(Operation):
     def __init__(self):
         super(BeginIf, self).__init__(numInputs=1, numOutputs=0, numTempvars=0, attributes=[Operation.Attributes.isBlockBegin])
-        self.opcode = opcodes.opcodes.BeginIf
+        self.opcode = Opcode.BeginIf
 
 
 class BeginElse(Operation):
     def __init__(self):
         super(BeginElse, self).__init__(numInputs=0, numOutputs=0, numTempvars=0, attributes=[Operation.Attributes.isBlockBegin, Operation.Attributes.isBlockEnd])
-        self.opcode = opcodes.opcodes.BeginElse
+        self.opcode = Opcode.BeginElse
 
 
 class EndIf(Operation):
     def __init__(self):
         super(EndIf, self).__init__(numInputs=0, numOutputs=0, numTempvars=0, attributes=[Operation.Attributes.isBlockEnd])
-        self.opcode = opcodes.opcodes.EndIf
+        self.opcode = Opcode.EndIf
 
 
 class BeginWhile(Operation):
     def __init__(self, comparater):
         super(BeginWhile, self).__init__(numInputs=2, numOutputs=0, numTempvars=0, attributes=[Operation.Attributes.isBlockBegin, Operation.Attributes.isLoopBegin])
-        self.opcode = opcodes.opcodes.BeginWhile
+        self.opcode = Opcode.BeginWhile
         self.comparater = comparater
 
     def __str__(self):
         input = " inp0, " + str(self.comparater) + ", inp1"
-        return opcodes.opcodes.opcodeList[self.opcode] + input
+        return opcode_list[self.opcode] + input
 
 
 class EndWhile(Operation):
     def __init__(self):
         super(EndWhile, self).__init__(numInputs=0, numOutputs=0, numTempvars=0, attributes=[Operation.Attributes.isBlockEnd, Operation.Attributes.isLoopEnd])
-        self.opcode = opcodes.opcodes.EndWhile
+        self.opcode = Opcode.EndWhile
 
 class BeginFor(Operation):
     def __init__(self, comparater, op):
         super(BeginFor, self).__init__(numInputs=3, numOutputs=0, numTempvars=1, attributes=[Operation.Attributes.isBlockBegin, Operation.Attributes.isLoopBegin])
-        self.opcode = opcodes.opcodes.BeginFor
+        self.opcode = Opcode.BeginFor
         self.op = op
         self.comparater = comparater
 
     def __str__(self):
         input = " inp0, "+str(self.op)+" , inp1, "+str(self.comparater)+" ,inp2"
-        return opcodes.opcodes.opcodeList[self.opcode] + input
+        return opcode_list[self.opcode] + input
 
 class EndFor(Operation):
     def __init__(self):
         super(EndFor, self).__init__(numInputs=0, numOutputs=0, numTempvars=0, attributes=[Operation.Attributes.isBlockEnd, Operation.Attributes.isLoopEnd])
-        self.opcode = opcodes.opcodes.EndFor
+        self.opcode = Opcode.EndFor
 
 class BeginDoWhile(Operation):
     def __init__(self):
         super(BeginDoWhile, self).__init__(numInputs=0, numOutputs=0, numTempvars=0, attributes=[Operation.Attributes.isBlockBegin, Operation.Attributes.isLoopBegin])
-        self.opcode = opcodes.opcodes.BeginDoWhile
+        self.opcode = Opcode.BeginDoWhile
 
 class EndDoWhile(Operation):
     def __init__(self, comparater):
         super(EndDoWhile, self).__init__(numInputs=2, numOutputs=0, numTempvars=0, attributes=[Operation.Attributes.isBlockEnd, Operation.Attributes.isLoopEnd])
-        self.opcode = opcodes.opcodes.EndDoWhile
+        self.opcode = Opcode.EndDoWhile
         self.comparater = comparater
 
 class EndForEach(Operation):
     def __init__(self):
         super(EndForEach, self).__init__(numInputs=0, numOutputs=0, numTempvars=0)
-        self.opcode = opcodes.opcodes.EndIf
+        self.opcode = Opcode.EndIf
 
 class Return(Operation):
     def __init__(self):
         super(Return, self).__init__(numInputs=1, numOutputs=0, numTempvars=0)
-        self.opcode = opcodes.opcodes.Return
+        self.opcode = Opcode.Return
 
 class Break(Operation):
     def __init__(self):
         super(Break, self).__init__(numInputs=0, numOutputs=0, numTempvars=0)
-        self.opcode = opcodes.opcodes.Break
+        self.opcode = Opcode.Break
 
 class Continue(Operation):
     def __init__(self):
         super(Continue, self).__init__(numInputs=0, numOutputs=0, numTempvars=0)
-        self.opcode = opcodes.opcodes.Continue
+        self.opcode = Opcode.Continue
 
 class UnaryOperation(Operation):
     def __init__(self, op):
         super(UnaryOperation, self).__init__(numInputs=1, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.UnaryOperation
+        self.opcode = Opcode.UnaryOperation
         self.op = op
 
     def __str__(self):
-        return "out0 = " + opcodes.opcodes.opcodeList[self.opcode] + " " + str(self.op) + " inp0"
+        return "out0 = " + opcode_list[self.opcode] + " " + str(self.op) + " inp0"
 
 class BinaryOperation(Operation):
     def __init__(self, op):
         super(BinaryOperation, self).__init__(numInputs=2, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.BinaryOperation
+        self.opcode = Opcode.BinaryOperation
         self.op = op
 
     def __str__(self):
-        return "out0 = " + opcodes.opcodes.opcodeList[self.opcode] + " inp0, " + str(self.op) + " ,inp1"
+        return "out0 = " + opcode_list[self.opcode] + " inp0, " + str(self.op) + " ,inp1"
 
 
 class Include(Operation):
     def __init__(self):
         super(Include, self).__init__(numInputs=1, numOutputs=0, numTempvars=0)
-        self.opcode = opcodes.opcodes.Include
+        self.opcode = Opcode.Include
 
 class Eval(Operation):
     def __init__(self, value):
         super(Eval, self).__init__(numInputs=1, numOutputs=0, numTempvars=0)
-        self.opcode = opcodes.opcodes.Eval
+        self.opcode = Opcode.Eval
         self.value = value
 
 
 class Phi(Operation):
     def __init__(self):
         super(Phi, self).__init__(numInputs = 1, numOutputs = 1, numTempvars = 0)
-        self.opcode = opcodes.opcodes.Phi
+        self.opcode = Opcode.Phi
 
 class Copy(Operation):
     def __init__(self):
         super(Copy, self).__init__(numInputs = 2, numOutputs = 0, numTempvars = 0)
-        self.opcode = opcodes.opcodes.Copy
+        self.opcode = Opcode.Copy
 
 class BeginFunction(Operation):
     def __init__(self,signature):
         super(BeginFunction, self).__init__(numInputs = 0, numOutputs = 1, numTempvars = signature.numArgs, attributes = [Operation.Attributes.isBlockBegin])
-        self.opcode = opcodes.opcodes.BeginFunction
+        self.opcode = Opcode.BeginFunction
         self.signature = signature
 
 class BuiltinFunction(Operation):
     def __init__(self, name, signature):
         super(BuiltinFunction, self).__init__(numInputs=0, numOutputs=1, numTempvars=signature.numArgs)
-        self.opcode = opcodes.opcodes.BuiltinMethod
+        self.opcode = Opcode.BuiltinMethod
         self.name = name
         self.signature = signature
 
 class EndFunction(Operation):
     def __init__(self):
         super(EndFunction, self).__init__(numInputs=0, numOutputs=0, numTempvars=0, attributes = [Operation.Attributes.isBlockEnd])
-        self.opcode = opcodes.opcodes.EndFunction
+        self.opcode = Opcode.EndFunction
 
 class CallFunction(Operation):
     def __init__(self, numArgs):
         super(CallFunction, self).__init__(numInputs=numArgs+1, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.CallFunction
+        self.opcode = Opcode.CallFunction
 
 class ThrowException(Operation):
     def __init__(self):
         super(ThrowException, self).__init__(numInputs = 1, numOutputs= 0, numTempvars = 0, attributes = [])
-        self.opcode = opcodes.opcodes.ThrowException
+        self.opcode = Opcode.ThrowException
 
 class BeginTry(Operation):
     def __init__(self):
         super(BeginTry, self).__init__(numInputs= 0, numOutputs= 0, numTempvars = 0, attributes = [Operation.Attributes.isBlockBegin])
-        self.opcode = opcodes.opcodes.BeginTry
+        self.opcode = Opcode.BeginTry
 
 class BeginCatch(Operation):
     def __init__(self):
         super(BeginCatch, self).__init__(numInputs = 0, numOutputs= 0, numTempvars = 0, attributes = [Operation.Attributes.isBlockBegin, Operation.Attributes.isBlockEnd])
-        self.opcode = opcodes.opcodes.BeginCatch
+        self.opcode = Opcode.BeginCatch
 
 class EndTryCatch(Operation):
     def __init__(self):
         super(EndTryCatch, self).__init__(numInputs = 0, numOutputs= 0, numTempvars = 0, attributes = [Operation.Attributes.isBlockEnd])
-        self.opcode = opcodes.opcodes.EndTryCatch
+        self.opcode = Opcode.EndTryCatch
 
 class CreateDict(Operation):
     def __init__(self, numInitialValues):
         super(CreateDict, self).__init__(numInputs=numInitialValues, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.CreateDict
+        self.opcode = Opcode.CreateDict
 
 class GetArrayElem(Operation):
     def __init__(self):
         super(GetArrayElem, self).__init__(numInputs=2, numOutputs=1, numTempvars=0)
-        self.opcode = opcodes.opcodes.GetArrayElem
+        self.opcode = Opcode.GetArrayElem
 
 class SetArrayElem(Operation):
     def __init__(self):
         super(SetArrayElem, self).__init__(numInputs=3, numOutputs=0, numTempvars=0)
-        self.opcode = opcodes.opcodes.SetArrayElem
+        self.opcode = Opcode.SetArrayElem
 
 class BeginClass(Operation):
     pass
@@ -304,7 +304,7 @@ class BeginForEach(Operation):
 class Print(Operation):
     def __init__(self):
         super(Print, self).__init__(numInputs = 1, numOutputs= 0, numTempvars = 0, attributes = [])
-        self.opcode = opcodes.opcodes.Print
+        self.opcode = Opcode.Print
 
 class Comparater:
     equal               = "=="

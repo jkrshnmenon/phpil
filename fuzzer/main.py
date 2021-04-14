@@ -25,8 +25,8 @@ class Fuzzer:
     def __init__(self, binary, args):
         self.binary = binary
         self.args = args
-        self.runner = executor.Executor(self.binary, cmdline_flags=args, is_stdin=False)
-        self.watchdog = coverage.Coverage(SANCOV_SCRIPT)
+        self.runner = executor.Executor(self.binary, cmdline_flags=args, is_stdin=False, output_dir='/home/hacker/workspace')
+        self.watchdog = coverage.Coverage(SANCOV_SCRIPT, output_dir='/home/hacker/workspace')
         self.start_time = time.time()
 
         os.system(f"mkdir -p {COVERAGE_DIR}")

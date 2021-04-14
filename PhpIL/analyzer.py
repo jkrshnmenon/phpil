@@ -1,8 +1,8 @@
 from . import program
-from . import opcodes
 from . import variable
 from . import operation
 from . import instructions
+from .opcode import Opcode
 from .typesData import Types
 
 class Analyzer(object):
@@ -45,7 +45,7 @@ class ScopeAnalyzer(Analyzer):
                 out = self.stack.pop()
                 self.scopes[-1].update([out])
 
-        if inst.getOpcode() == opcodes.opcodes.BeginFunction:
+        if inst.getOpcode() == Opcode.BeginFunction:
             self.stack.append(inst.getOutput())
         else:
             self.scopes[-1].update(inst.getAllOutputs())
@@ -143,30 +143,30 @@ class TypeAnalyzer(Analyzer):
 
     def analyze(self, inst):
 
-        if inst.getOpcode() == opcodes.opcodes.LoadInteger:
+        if inst.getOpcode() == Opcode.LoadInteger:
             self.setType(inst.getAllOutputs(), Types.Integer)
-        if inst.getOpcode() == opcodes.opcodes.LoadFloat:
+        if inst.getOpcode() == Opcode.LoadFloat:
             self.setType(inst.getAllOutputs(), Types.Float)
-        if inst.getOpcode() == opcodes.opcodes.LoadString:
+        if inst.getOpcode() == Opcode.LoadString:
             self.setType(inst.getAllOutputs(), Types.String)
-        if inst.getOpcode() == opcodes.opcodes.LoadBoolean:
+        if inst.getOpcode() == Opcode.LoadBoolean:
             self.setType(inst.getAllOutputs(), Types.Boolean)
-        if inst.getOpcode() == opcodes.opcodes.LoadNull:
+        if inst.getOpcode() == Opcode.LoadNull:
             self.setType(inst.getAllOutputs(), Types.Null)
-        # if inst.getOpcode() == opcodes.opcodes.LoadObject:
+        # if inst.getOpcode() == Opcode.LoadObject:
         #     self.setType(inst.getAllOutputs(), Types.Object)
-        if inst.getOpcode() == opcodes.opcodes.BeginClass:
+        if inst.getOpcode() == Opcode.BeginClass:
             self.setType(inst.getAllOutputs(), Types.Class)
 
-        if inst.getOpcode() == opcodes.opcodes.UnaryOperation:
+        if inst.getOpcode() == Opcode.UnaryOperation:
             if self.getType(inst.getInput()) == Types.Unknown:
                 self.setType(inst.getAllInputs(), Types.Integer)
             self.setType(inst.getAllOutputs(), self.getType(inst.getInput(0)))
 
-        if inst.getOpcode() == opcodes.opcodes.BeginFor:
+        if inst.getOpcode() == Opcode.BeginFor:
             self.setType(inst.getAllTemps(), self.getType(Types.Unknown))
 
-        if inst.getOpcode() == opcodes.opcodes.BinaryOperation:
+        if inst.getOpcode() == Opcode.BinaryOperation:
 
             op = inst.operation.op
 
@@ -209,13 +209,13 @@ class TypeAnalyzer(Analyzer):
 
               self.setType(inst.getAllOutputs(),Types.Integer)
 
-        if inst.getOpcode() == opcodes.opcodes.Phi:
+        if inst.getOpcode() == Opcode.Phi:
             inp = inst.getInput()
             self.setType(inst.getAllOutputs(), self.getType(inp))
             if self.getType(inp) == Types.Function:
                 self.signatureTracker[inst.getOutput()] = self.getSignature(inp)
 
-        if inst.getOpcode() == opcodes.opcodes.Copy:
+        if inst.getOpcode() == Opcode.Copy:
             inp = inst.getInput(1)
             self.setType([inst.getInput(0)], self.getType(inp))
             if self.getType(inp) == Types.Function:
@@ -246,19 +246,19 @@ class TypeAnalyzer(Analyzer):
             signature.setReturnType(returnType)
             signature.setInputTypes(inputTypes)
 
-        if inst.getOpcode() == opcodes.opcodes.Return:
+        if inst.getOpcode() == Opcode.Return:
             self.returnStack[-1].append(self.getType(inst.getInput(0)))
 
-        if inst.getOpcode() == opcodes.opcodes.CallFunction:
+        if inst.getOpcode() == Opcode.CallFunction:
             func = self.signatureTracker[inst.getInput()]
             returnType = func.getReturnType()
             self.setType(inst.getAllOutputs(), returnType)
 
-        if inst.getOpcode() == opcodes.opcodes.BeginIf:
+        if inst.getOpcode() == Opcode.BeginIf:
             if self.getType(inst.getInput()) == Types.Unknown:
                 self.setType(inst.getAllInputs(), Types.Boolean)
 
-        if inst.getOpcode() == opcodes.opcodes.CreateArray:
+        if inst.getOpcode() == Opcode.CreateArray:
             self.setType(inst.getAllOutputs(), Types.Array)
         
 

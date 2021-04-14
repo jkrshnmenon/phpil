@@ -1,6 +1,6 @@
 from . import operation
 from . import variable
-from . import opcodes
+from .opcode import Opcode
 
 class Instruction:
 
@@ -56,16 +56,16 @@ class Instruction:
 
     '''misc functions'''
     def isBeginFunction(self):
-        return self.operation.opcode == opcodes.opcodes.BeginFunction
+        return self.operation.opcode == Opcode.BeginFunction
     
     def isBuiltinFunction(self):
-        return self.operation.opcode == opcodes.opcodes.BuiltinMethod
+        return self.operation.opcode == Opcode.BuiltinMethod
 
     def isEndFunction(self):
-        return self.operation.opcode == opcodes.opcodes.EndFunction
+        return self.operation.opcode == Opcode.EndFunction
 
     def isBeginElse(self):
-        return self.operation.opcode == opcodes.opcodes.BeginElse
+        return self.operation.opcode == Opcode.BeginElse
 
     def hasOutputs(self):
         return self.operation.numOutputs != 0
