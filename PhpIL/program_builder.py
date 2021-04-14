@@ -54,7 +54,11 @@ class ProgramBuilder:
         
         retval = []
 
+        black_list = ['posix_kill', 'sleep', 'time_sleep_unti']
+
         for item in func_map:
+            if item['name'] in black_list:
+                continue
             # TODO: we currently do not handle functions that take in resource-like object as input
             if 'Types.Bad' in item['arg_types'] or 'Types.Class' in item['arg_types']:
                 continue

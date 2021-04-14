@@ -80,7 +80,6 @@ class ContextAnalyzer(Analyzer):
 
             if self.context[-1][0] & ContextAnalyzer.isInFunction:
                 a.append("InFunction")
-            print(a)
 
         if inst.isLoopBegin() or inst.isBeginFunction():
             self.context.append([self.context[-1][0]])

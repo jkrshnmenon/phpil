@@ -53,7 +53,9 @@ class Fuzzer:
         finish one fuzzing iteration
         """
         # Mutate code
-        self.runner.code = self.generate_input()
+        code = self.generate_input()
+        print(code)
+        self.runner.code = code
         self.runner.execute()
         self.collect_feedback()
 
