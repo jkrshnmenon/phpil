@@ -105,11 +105,13 @@ class ProgramBuilder:
 
         return self.program
 
-    '''get variables of type "type" '''
     def randVar(self, dtype=typesData.Types.Unknown, strict=0):
+        """
+        get variables of type <dtype>
+        """
 
         candidates = []
-        ctr = 2*len(self.scopeAnalyzer.scopes)
+        ctr = 2 * len(self.scopeAnalyzer.scopes)
         while len(candidates) == 0 and ctr > 0:
             candidates = probability.Random.chooseBiased(self.scopeAnalyzer.scopes, 6)
             candidates = list(filter(lambda x: self.typeAnalyzer.getType(x) == dtype or self.typeAnalyzer.getType(x) == typesData.Types.Unknown, candidates))
@@ -129,13 +131,10 @@ class ProgramBuilder:
                 while len(candidates) == 0:
                     candidates = probability.Random.chooseBiased(self.scopeAnalyzer.scopes, 5)
 
-
-
+        # FIXME: wtf is this? the False will be directly added to the final code. wtf???
         if len(candidates) == 0:
             return False
-        # print candidates
         ret = probability.Random.chooseUniform(candidates)
-        # print ret, self.typeAnalyzer.getType(ret)
         return ret
 
     def generateRandomInst(self):
@@ -243,7 +242,9 @@ class ProgramBuilder:
             tempVars.append(self.nextVariable())
 
         if ops.opcode == Opcode.BuiltinMethod:
-            outputs = [variable.Variable(ops.name)]
+            var = self.nextVariable()
+            var.set_repr(ops.name)
+            outputs = [var]
 
         if outputs == []:
             outputs = False

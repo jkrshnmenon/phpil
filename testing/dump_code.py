@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import random
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
@@ -9,6 +10,8 @@ from PhpIL import program
 from PhpIL import lifter
 from PhpIL import executor
 from PhpIL import coverage
+
+random.seed(1)
 
 logger = logging.getLogger('Executor')
 logging.basicConfig(level=logging.DEBUG, format='%(name)s - %(levelname)s - %(message)s')
@@ -37,7 +40,7 @@ def main():
     # ])
     # print(prog)
     # pb = program_builder.ProgramBuilder(prog, init_builtins=True)
-    runner = executor.Executor(PHP_BINARY, cmdline_flags=['-c', '/home/hacker/php.ini'], is_stdin=False)
+    runner = executor.Executor(PHP_BINARY, output_dir="/tmp", cmdline_flags=['-c', '/home/hacker/php.ini'], is_stdin=False)
     watchdog = coverage.Coverage(SANCOV_SCRIPT)
     pb = program_builder.ProgramBuilder(init_builtins=True)
     
@@ -54,8 +57,9 @@ def main():
     for sancov_file in watchdog.find_reports('/tmp/coverages'):
         watchdog.analyze(obj=PHP_BINARY, report_file=sancov_file)
     watchdog.clear_reports('/tmp/coverages')
-    runner.dump_inputs('/home/hacker/workspace/fuzzer_inputs.json')
-    watchdog.dump_coverage('/home/hacker/workspace/coverage.json')
+    print(code)
+    #runner.dump_inputs('/home/hacker/workspace/fuzzer_inputs.json')
+    #watchdog.dump_coverage('/home/hacker/workspace/coverage.json')
 
 
 if __name__ == '__main__':

@@ -7,8 +7,8 @@ from .typesData import Types
 
 class Analyzer(object):
 
-    def __init__(self, programToAnalyse):
-        self.program = programToAnalyse
+    def __init__(self, program):
+        self.program = program
 
     ''' Perform analysis on the entire program'''
     def doAnalyze(self):
@@ -16,28 +16,25 @@ class Analyzer(object):
             self.analyze(inst)
 
     ''' Virtual function that analyzes a given instruction '''
-    def analyze(self,inst):
+    def analyze(self, inst):
         pass
 
 class ScopeAnalyzer(Analyzer):
 
-    def __init__(self, programToAnalyse):
-        super(ScopeAnalyzer, self).__init__(programToAnalyse)
-        self.scopes = [set([])]
+    def __init__(self, program):
+        super(ScopeAnalyzer, self).__init__(program)
+        self.scopes = [set()]
         self.numScopes = 1
         self.stack = []
 
     def getVisibleVars(self):
-        # print [j for i in self.scopes for j in i]
         return [j for i in self.scopes for j in i]
 
     def getOuterVisibleVars(self):
         outerScopes = self.scopes[:-1]
-        # print self.scopes
         return [j for i in outerScopes for j in i]
 
     def analyze(self, inst):
-        # print self.scopes
 
         if inst.isBlockEnd():
             self.scopes.pop()
@@ -54,8 +51,6 @@ class ScopeAnalyzer(Analyzer):
             self.scopes.append(set([]))
 
         self.scopes[-1].update(inst.getAllTemps())
-
-        # print self.scopes
 
 class ContextAnalyzer(Analyzer):
 

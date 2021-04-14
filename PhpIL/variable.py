@@ -1,32 +1,27 @@
 class Variable:
 
-    def __init__(self,id):
+    def __init__(self, id):
         self.id = id
+        self._repr = None
+
+    def set_repr(self, repr):
+        self._repr = repr
 
     def __eq__(self, other):
         if not isinstance(other, Variable):
             return False
-        if self.id == other.id:
-            return True
-        return False
+        return self.id == other.id
 
     def __str__(self):
-        if isinstance(self.id, int):
-            retval = "$v"+str(self.id)
-        else:
-            retval = self.id
-        return retval
+        if self._repr is None:
+            return "$v"+str(self.id)
+        return self._repr
 
     def __hash__(self):
-        # print "AA"
-        return hash(self.id)
+        return self.id
 
     def __repr__(self):
-        if isinstance(self.id, int):
-            retval = "v"+str(self.id)
-        else:
-            retval = self.id
-        return retval
+        return self.__str__()
 
 if __name__ == '__main__':
     print (Variable(1))
