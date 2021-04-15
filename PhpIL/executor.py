@@ -78,7 +78,8 @@ class Executor:
         # we only record weird exit_code
         # 0 means everything is fine
         # -1/255 means syntax error
-        if exit_code not in {0, 255, -1}:
+        # -25 means some php fatal errors, not interesting for us
+        if exit_code not in {0, 255, -1, -25}:
             logger.info("Logging code with exit_code: %d", exit_code)
             self._non_zero_exits[exit_code].append({'input': self.code, 'output': output})
             self.crash_num += 1
