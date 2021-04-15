@@ -54,20 +54,24 @@ class Fuzzer:
         """
         # Mutate code
         code = self.generate_input()
-        print(code)
+        #print(code)
         self.runner.code = code
-        self.runner.execute()
+        output, err, exit_code = self.runner.execute()
+        print(f"exit_code: {exit_code}")
         self.collect_feedback()
 
     def run(self):
         pbar = tqdm.tqdm(bar_format="\rexec speed: {rate}\n")
         while True:
             try:
+                print(f"crash_num: {self.runner.crash_num}")
                 pbar.update(1)
                 self.run_once()
             except KeyboardInterrupt:
-                self.runner.dump_inputs('/home/hacker/workspace/fuzzer_inputs.json')
-                self.watchdog.dump_coverage('/home/hacker/workspace/coverage.json')
+                print("saving input and coverage...")
+                self.runner.dump_inputs('fuzzer_inputs.json')
+                self.watchdog.dump_coverage('coverage.json')
+                time.sleep(1)
             except Exception as e:
                 logger.exception(e)
 

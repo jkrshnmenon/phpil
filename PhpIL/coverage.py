@@ -3,7 +3,7 @@ import sys
 import json
 import logging
 import subprocess
-import pwn
+import pwnlib
 
 logger = logging.getLogger('Coverage')
 
