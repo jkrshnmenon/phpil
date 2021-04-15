@@ -4,7 +4,7 @@ IMAGE_NAME ?= $(notdir $(PWD))
 TAG ?= latest
 CONTAINER_NAME ?= php-debug
 
-.PHONY: build release shell commit run exec
+.PHONY: build release shell commit debug run exec
 
 help:
 	@echo ''
@@ -12,8 +12,9 @@ help:
 	@echo 'Targets:'
 	@echo '  build    	build docker image $(NS)/$(IMAGE_NAME):$(TAG)'
 	@echo '  release	push docker image $(NS)/$(IMAGE_NAME):$(TAG)'
-	@echo '  shell		debug container for image $(NS)/$(IMAGE_NAME):$(TAG) as $(CONTAINER_NAME)'
+	@echo '  shell		test container for image $(NS)/$(IMAGE_NAME):$(TAG) as $(CONTAINER_NAME)'
 	@echo '  exec		run container for image $(NS)/$(IMAGE_NAME):$(TAG) as $(CONTAINER_NAME)'
+	@echo '  debug		run container for image $(NS)/$(IMAGE_NAME):$(TAG) as $(CONTAINER_NAME) with source mapped as volume'
 	@echo '  commit	build and push docker image $(NS)/$(IMAGE_NAME):$(TAG)'
 	@echo '  run		build and run docker image $(NS)/$(IMAGE_NAME):$(TAG) as $(CONTAINER_NAME)'
 	@echo ''
@@ -32,7 +33,10 @@ exec:
 	docker run --rm -v $(PWD)/workspace:/home/hacker/workspace --name $(CONTAINER_NAME) -it $(NS)/$(IMAGE_NAME):$(TAG)
 
 shell: build
-	docker run --rm -v $(PWD):/home/hacker/phpil --name $(CONTAINER_NAME) -it $(NS)/$(IMAGE_NAME):$(TAG) bash
+	docker run --rm -v $(PWD)/workspace:/home/hacker/workspace --name $(CONTAINER_NAME) -it $(NS)/$(IMAGE_NAME):$(TAG) bash
+
+debug: build
+	docker run --rm -v $(PWD):/home/hacker/phpil --name $(CONTAINER_NAME) -it $(NS)/$(IMAGE_NAME):$(TAG) /bin/bash
 
 commit: build release
 
