@@ -54,7 +54,6 @@ class Fuzzer:
         """
         # Mutate code
         code = self.generate_input()
-        #print(code)
         self.runner.code = code
         output, err, exit_code = self.runner.execute()
         print(f"exit_code: {exit_code}")
@@ -69,7 +68,7 @@ class Fuzzer:
                 self.run_once()
             except KeyboardInterrupt:
                 print("saving input and coverage...")
-                self.runner.dump_inputs('fuzzer_inputs.json')
+                self.runner.dump_inputs(filename='fuzzer_inputs.json')
                 self.watchdog.dump_coverage('coverage.json')
                 time.sleep(1)
             except Exception as e:

@@ -55,13 +55,8 @@ class Executor:
             return self._execute(filename=fp.name)
     
     def dump_inputs(self, filename='fuzzer_inputs.json'):
-        if len(self._non_zero_exits) == 0:
-            logger.info("No interesting inputs yet")
-            return
-        
-        with open(f'{self._output_dir}/{filename}', 'w') as f:
+        with open(os.path.join(self._output_dir, filename), 'w') as f:
             json.dump(self._non_zero_exits, f, indent=2)
-
 
     def _execute(self, filename=None):
         output, err, exit_code = b'', b'', 255
