@@ -8,7 +8,7 @@ from collections import defaultdict
 import pwnlib
 
 logger = logging.getLogger('Executor')
-logging.getLogger('pwnlib.tubes.process.process').setLevel(logging.ERROR)
+#logging.getLogger('pwnlib.tubes.process.process').setLevel(logging.DEBUG)
 
 class Executor:
     '''
@@ -31,6 +31,7 @@ class Executor:
         self._is_stdin = is_stdin
         self._non_zero_exits = defaultdict(list)
         self.code = code
+        self.crash_num = 0
     
     def execute(self, collect_stderr=False, save_input=False):
         logger.info("Executing %s" % self._program_path)
@@ -63,20 +64,29 @@ class Executor:
 
 
     def _execute(self, filename=None):
+        output, err, exit_code = b'', b'', 255
+
         cmd = self._build_command(filename=filename)
 
-        command = ['ASAN_OPTIONS="coverage=1:coverage_dir=/tmp/coverages/"'] + cmd
-        output, err, exit_code = b'', b'', -1
-
-        r = pwnlib.tubes.process.process(' '.join(x for x in command), shell=True, alarm=5)
-        output = r.recvall().strip().decode('utf-8')
+        env = os.environ.copy()
+        env["ASAN_OPTIONS"] = "coverage=1:coverage_dir=/tmp/coverages/"
+        r = pwnlib.tubes.process.process(cmd, env=env)
+        r.wait(timeout=5)
         exit_code = r.poll()
+        if exit_code is None:
+            r.kill()
+            exit_code = 255
+        output = r.recvall(timeout=1).strip().decode('utf-8')
         logger.info("Received %d bytes of output" % len(output))
         
-        logger.info("Process exited with exit code %d" % exit_code)
-        if exit_code != 0:
+        logger.info("Process exited with exit code %d", exit_code)
+        # we only record weird exit_code
+        # 0 means everything is fine
+        # -1/255 means syntax error
+        if exit_code not in {0, 255, -1}:
             logger.info("Logging code with exit_code: %d", exit_code)
             self._non_zero_exits[exit_code].append({'input': self.code, 'output': output})
+            self.crash_num += 1
 
         return output, err, exit_code
 

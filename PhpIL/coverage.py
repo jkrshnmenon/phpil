@@ -3,10 +3,7 @@ import sys
 import json
 import logging
 import subprocess
-try:
-    import pwn
-except ImportError:
-    pass
+import pwn
 
 logger = logging.getLogger('Coverage')
 
@@ -72,15 +69,8 @@ class Coverage:
             self._report_path = report_file
 
         err = ''
-        if 'pwn' in sys.modules:
-            logger.info("Using pwn module")
-            output = pwn.process([f'{self._script_path}', 'print', f'{self._report_path}'], stderr=subprocess.PIPE).recvall().strip().decode('utf-8')
-        else:
-            logger.info("Using subprocess module")
-            process = subprocess.Popen([f'{self._script_path}', 'print', f'{self._report_path}'], stdout=subprocess.PIPE)
-            output, err = process.communicate()
-            output = output.strip().decode('utf-8')
-            err = err.strip().decode('utf-8')
+        logger.info("Using pwn module")
+        output = pwnlib.tubes.process.process([f'{self._script_path}', 'print', f'{self._report_path}'], stderr=subprocess.PIPE).recvall().strip().decode('utf-8')
         
         if not dump_source:
             pc_addrs = list(map(lambda x: int(x, 16), output.splitlines()))
@@ -124,14 +114,13 @@ class Coverage:
         return pc_source_map
     
     def _pc_to_source(self, pc_addr, obj):
-        if 'pwn' in sys.modules:
-            line = pwn.process(['llvm-symbolizer', '--obj', f'{obj}', pc]).recvall().strip().decode('utf-8').splitlines()
-            for idx in range(0, len(line), 2):
-                func_name = line[idx]
-                filename, line_num, _ = line[idx+1].split(':')
+        line = pwnlib.tubes.process.process(['llvm-symbolizer', '--obj', f'{obj}', pc]).recvall().strip().decode('utf-8').splitlines()
+        for idx in range(0, len(line), 2):
+            func_name = line[idx]
+            filename, line_num, _ = line[idx+1].split(':')
 
-            if filename == '??':
-                return None
-            
-            logger.debug("Function %s in file %s @ %s" % (func_name, filename, line_num))
-            return {'function': func_name, 'filename': filename, 'line': line_num}
+        if filename == '??':
+            return None
+
+        logger.debug("Function %s in file %s @ %s" % (func_name, filename, line_num))
+        return {'function': func_name, 'filename': filename, 'line': line_num}
